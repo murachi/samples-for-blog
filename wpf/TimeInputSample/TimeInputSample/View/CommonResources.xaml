@@ -1,0 +1,34 @@
+﻿
+    <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- 共通設定 (フォントなど) -->
+    <Style TargetType="Control">
+        <Setter Property="FontFamily" Value="Meiryo UI" />
+        <Setter Property="FontSize" Value="11pt" />
+    </Style>
+    <Style TargetType="Label" BasedOn="{StaticResource {x:Type Control}}" />
+    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type Control}}" />
+    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Control}}" />
+    <Style TargetType="DatePicker" BasedOn="{StaticResource {x:Type Control}}">
+        <Setter Property="Padding" Value="0" />
+    </Style>
+    
+    <!-- 数値入力専用テキストボックス -->
+    <Style x:Key="DigitTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="TextAlignment" Value="Right" />
+        <Setter Property="InputMethod.IsInputMethodSuspended" Value="True" />
+    </Style>
+    
+    <!-- データグリッド -->
+    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type Control}}">
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+    <Style TargetType="DataGrid" BasedOn="{StaticResource {x:Type Control}}">
+        <Setter Property="ColumnHeaderStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

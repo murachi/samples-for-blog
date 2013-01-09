@@ -1,8 +1,23 @@
 ﻿<Window x:Class="TimeInputSample.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="525" xmlns:my="clr-namespace:TimeInputSample.View">
+    <Window.Resources>
+        <ResourceDictionary Source="View/CommonResources.xaml" />
+    </Window.Resources>
     <Grid>
-        
+        <my:DateTimeInputControl HorizontalAlignment="Left" Margin="12,12,0,0" VerticalAlignment="Top"
+                                 DataContext="{Binding Path=NoteDateTime}" />
+        <TextBox Height="24" HorizontalAlignment="Left" Margin="210,12,0,0" VerticalAlignment="Top" Width="281"
+                 Text="{Binding Path=NoteDetail}"/>
+        <Button Content="書き込む" Height="24" HorizontalAlignment="Left" Margin="12,42,0,0"
+                VerticalAlignment="Top" Width="96" Command="{Binding Path=WriteCommand}" />
+        <DataGrid AutoGenerateColumns="False" Height="227" HorizontalAlignment="Left" Margin="12,72,0,0"
+                  VerticalAlignment="Top" Width="479" ItemsSource="{Binding Path=DateTimeNotes}" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="日時" Width="160" Binding="{Binding Path=NoteDateTime}" />
+                <DataGridTextColumn Header="メモ" Width="300" Binding="{Binding Path=NoteDetail}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

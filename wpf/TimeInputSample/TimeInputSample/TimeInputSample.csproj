@@ -58,8 +58,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ViewModel\CustomCommand.cs" />
-    <Compile Include="ViewModel\DateTimeInputViewModel.cs" />
-    <Compile Include="ViewModel\TimeInputViewModel.cs" />
+    <Compile Include="ViewModel\DateTimeInputControlData.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="ViewModel\TimeInputControlData.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="View\DateTimeInputControl.xaml.cs">
       <DependentUpon>DateTimeInputControl.xaml</DependentUpon>

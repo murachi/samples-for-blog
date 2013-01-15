@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="TimeInputSample.View.DateTimeInputControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:view="clr-namespace:TimeInputSample.View">
+    <UserControl.Resources>
+        <ResourceDictionary Source="CommonResources.xaml" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <DatePicker Width="120" SelectedDate="{Binding Path=Date}" Grid.Column="0" />
+        <view:TimeInputControl Margin="6,0,0,0" DataContext="{Binding Path=Time}" Grid.Column="1" />
+    </Grid>
+</UserControl>

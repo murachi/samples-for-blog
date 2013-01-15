@@ -8,7 +8,7 @@ using System.Data.SqlServerCe;
 
 namespace TimeInputModel
 {
-    public class NoteBook
+    public class NoteBook : IDisposable
     {
         public class DateTimeNote
         {
@@ -49,12 +49,17 @@ namespace TimeInputModel
 
         SqlCeConnection connection = new SqlCeConnection("Data Source = DateTimeNotes.sdf");
 
-        private NoteBook()
+        public NoteBook()
         {
             connection.Open();
         }
 
-        private NoteCollection ActiveData
+        public void Dispose()
+        {
+            connection.Close();
+        }
+
+        public NoteCollection ActiveData
         {
             get
             {
@@ -64,20 +69,14 @@ namespace TimeInputModel
             }
         }
 
-        private void Insert(DateTimeNote note)
+        public void AppendNote(DateTime date_time, string detail)
         {
-        }
-
-        private static NoteBook singleton = new NoteBook();
-
-        public static NoteCollection GetActiveData()
-        {
-            return singleton.ActiveData;
-        }
-
-        public static int InsertNote(DateTime date_time, string detail)
-        {
-
+            var command = connection.CreateCommand();
+            command.CommandText = "insert NOTES_TABLE (NOTE_DATETIME, NOTE_DETAIL) values (@date_time, @detail)";
+            command.Parameters.Add("@date_time", date_time);
+            command.Parameters.Add("@detail", detail);
+            command.Prepare();
+            command.ExecuteNonQuery();
         }
     }
 }

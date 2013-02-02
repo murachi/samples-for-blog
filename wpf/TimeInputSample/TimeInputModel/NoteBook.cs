@@ -8,8 +8,21 @@ using System.Data.SqlServerCe;
 
 namespace TimeInputModel
 {
+    /// <summary>
+    /// 日時メモ DB アクセス用オブジェクト
+    /// </summary>
+    /// <remarks>
+    /// メモをたくさん収めたもの、ということで book などと洒落込んでますが、
+    /// 実のところ、ただ単に一覧参照して、レコード追加できるだけの代物、みたいですよ。
+    /// </remarks>
     public class NoteBook : IDisposable
     {
+        /// <summary>
+        /// 1レコード分の日時メモオブジェクト。
+        /// </summary>
+        /// <remarks>
+        /// 一覧を取得するときにしか使わない、らしいですよ。
+        /// </remarks>
         public class DateTimeNote
         {
             public int Code { get; private set; }
@@ -24,6 +37,13 @@ namespace TimeInputModel
             }
         }
 
+        /// <summary>
+        /// 日時メモ一覧オブジェクト。
+        /// </summary>
+        /// <remarks>
+        /// 日時メモを DB から順次取り出すためのオブジェクト、らしいですよ。
+        /// foreach 文を使って順次取り出せるようにしてある、みたいですよ。
+        /// </remarks>
         public class NoteCollection : IEnumerable
         {
             SqlCeCommand sql_command;
@@ -49,16 +69,28 @@ namespace TimeInputModel
 
         SqlCeConnection connection = new SqlCeConnection("Data Source = DateTimeNotes.sdf");
 
+        /// <summary>
+        /// コンストラクタ。
+        /// </summary>
         public NoteBook()
         {
             connection.Open();
         }
 
+        /// <summary>
+        /// ディスポーザ。
+        /// </summary>
+        /// <remarks>
+        /// using ブロックを使えば、スコープから抜けた時点で DB が close する、らしいですよ。
+        /// </remarks>
         public void Dispose()
         {
             connection.Close();
         }
 
+        /// <summary>
+        /// 日時メモ一覧アクセサ。
+        /// </summary>
         public NoteCollection ActiveData
         {
             get
@@ -69,6 +101,11 @@ namespace TimeInputModel
             }
         }
 
+        /// <summary>
+        /// 日時メモの記録を追加する。
+        /// </summary>
+        /// <param name="date_time">日時</param>
+        /// <param name="detail">メモの内容</param>
         public void AppendNote(DateTime date_time, string detail)
         {
             var command = connection.CreateCommand();

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:view="clr-namespace:TimeInputSample.View"
         xmlns:vm="clr-namespace:TimeInputSample.ViewModel"
-        Title="MainWindow" Height="350" Width="525">
+        Title="日時メモ" Height="350" Width="525">
     <Window.Resources>
         <ResourceDictionary Source="View/CommonResources.xaml" />
     </Window.Resources>

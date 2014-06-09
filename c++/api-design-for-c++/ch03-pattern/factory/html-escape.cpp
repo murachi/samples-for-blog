@@ -9,7 +9,6 @@
 
 namespace apides {
 
-HtmlEscape::HtmlEscape() = default;
 HtmlEscape::~HtmlEscape() = default;
 
 std::string HtmlEscape::encode(std::string const& text) const
@@ -33,7 +32,7 @@ std::string HtmlEscape::encode(std::string const& text) const
 
 std::string HtmlEscape::decode(std::string const& text) const
 {
-	string dist;
+	std::string dist;
 	auto from = text.begin();
 	for (auto to = std::find(from, text.end(), '&'); to != text.end(); to = std::find(from, text.end(), '&')) {
 		auto next_from = std::find(to, text.end(), ';');

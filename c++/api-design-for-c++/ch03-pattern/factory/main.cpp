@@ -22,5 +22,15 @@ int main()
 
 	std::cout << "Repaired text: " << repaired_text << std::endl;
 
+	std::unique_ptr<apides::ReversibleBase> base64_conv{apides::ReversibleFactory{}.CreateReversible("base64")};
+
+	auto base64_text = base64_conv->encode(src_text);
+
+	std::cout << "Base64 text: " << base64_text << std::endl;
+
+	auto base64_decoded = base64_conv->decode(base64_text);
+
+	std::cout << "Decoded from Base64 text: " << base64_decoded << std::endl;
+
 	return 0;
 }

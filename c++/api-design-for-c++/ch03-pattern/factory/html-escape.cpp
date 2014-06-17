@@ -4,10 +4,22 @@
 */
 
 #include "html-escape.h"
+#include "reversible-factory.h"
 #include <string>
 #include <algorithm>
 
 namespace apides {
+
+class HtmlEscape::Impl {
+};
+
+struct HtmlEscape::FactoryRegister {
+	FactoryRegister() { ReversibleFactory::registFactory("html escape", [](){ return new HtmlEscape(); }); }
+};
+
+HtmlEscape::FactoryRegister HtmlEscape::factory_register;
+
+HtmlEscape::HtmlEscape() : impl{new HtmlEscape::Impl()} {}
 
 HtmlEscape::~HtmlEscape() = default;
 

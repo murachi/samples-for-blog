@@ -11,10 +11,18 @@ namespace apides {
 
 class HtmlEscape : public ReversibleBase {
 public:
+	HtmlEscape();
 	virtual ~HtmlEscape();
 
 	virtual std::string encode(std::string const& text) const;
 	virtual std::string decode(std::string const& text) const;
+
+private:
+	class Impl;
+	std::unique_ptr<Impl> impl;
+
+	struct FactoryRegister;
+	static FactoryRegister factory_register;
 };
 
 }	//namespace apides

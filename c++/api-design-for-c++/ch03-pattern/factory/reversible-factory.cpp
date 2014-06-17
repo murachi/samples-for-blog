@@ -10,12 +10,16 @@
 
 namespace apides {
 
+ReversibleFactory::FactoryMap ReversibleFactory::factory_map;
+
+void ReversibleFactory::registFactory(std::string const* type_name, ReversibleFactory::FactoryCallback callback)
+{
+	factory_map[type_name] = callback;
+}
+
 ReversibleBase * ReversibleFactory::CreateReversible(std::string const& type)
 {
-	if (type == "html escape")	return new HtmlEscape();
-	if (type == "base64") return new Base64Converter();
-
-	return nullptr;
+	return factory_map.count(type) > 0 ? factory_map[type]() : nullptr;
 }
 
 }	//namespace apides

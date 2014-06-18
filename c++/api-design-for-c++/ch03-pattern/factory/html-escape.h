@@ -6,6 +6,8 @@
 #define APIDES_FACTORY_HTML_ESCAPE_H
 
 #include "reversible-base.h"
+#include <string>
+#include <memory>
 
 namespace apides {
 

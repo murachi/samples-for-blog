@@ -4,6 +4,7 @@
 */
 
 #include "base64.h"
+#include "reversible-factory.h"
 #include <string>
 #include <utility>
 #include <algorithm>
@@ -62,7 +63,7 @@ struct Base64Converter::Impl {
 		hexa.push_back(*from << 4 & 0x30);
 		if (++from == end) return hexa;
 		hexa.back() |= *from >> 4 & 0x0f;
-		hexa.push_back(*from << 2 & 0x3c;
+		hexa.push_back(*from << 2 & 0x3c);
 		if (++from == end) return hexa;
 		hexa.back() |= *from >> 6 & 0x03;
 		hexa.push_back(*from & 0x3f);
@@ -85,6 +86,16 @@ struct Base64Converter::Impl {
 		return octa;
 	}
 };
+
+struct Base64Converter::FactoryRegister {
+	FactoryRegister()
+	{
+		ReversibleFactory::registFactory("base64",
+			[]() -> ReversibleBase * { return new Base64Converter(); });
+	}
+};
+
+Base64Converter::FactoryRegister Base64Converter::factory_register;
 
 Base64Converter::Base64Converter() :
 	impl{new Base64Converter::Impl{}}

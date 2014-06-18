@@ -8,17 +8,26 @@
 #include "html-escape.h"
 #include "base64.h"
 
+#include <unordered_map>
+
 namespace apides {
 
-ReversibleFactory::FactoryMap ReversibleFactory::factory_map;
+typedef std::unordered_map<std::string, ReversibleFactory::FactoryCallback> FactoryMap;
 
-void ReversibleFactory::registFactory(std::string const* type_name, ReversibleFactory::FactoryCallback callback)
+FactoryMap & getMap()
 {
-	factory_map[type_name] = callback;
+	static FactoryMap factory_map;
+	return factory_map;
+}
+
+void ReversibleFactory::registFactory(std::string const& type_name, ReversibleFactory::FactoryCallback callback)
+{
+	getMap()[type_name] = callback;
 }
 
 ReversibleBase * ReversibleFactory::CreateReversible(std::string const& type)
 {
+	auto & factory_map = getMap();
 	return factory_map.count(type) > 0 ? factory_map[type]() : nullptr;
 }
 

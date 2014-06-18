@@ -5,12 +5,23 @@
 
 #include "base64.h"
 #include <string>
+#include <utility>
 #include <algorithm>
 #include <vector>
 #include <array>
+#include <iterator>
 #include <cassert>
 
 namespace apides {
+
+class Base64Converter::Base64Map {
+	char map[64];
+	char rmap[128];
+public:
+	Base64Map();
+	char n2b(char n) const;
+	char b2n(char b) const;
+};
 
 Base64Converter::Base64Map::Base64Map()
 {
@@ -42,26 +53,52 @@ char Base64Converter::Base64Map::b2n(char b) const
 
 Base64Converter::Base64Map const Base64Converter::map;
 
+struct Base64Converter::Impl {
+	template <class Iter>
+	std::vector<char> octa2Hexa(Iter from, Iter end) const
+	{
+		std::vector<char> hexa;
+		hexa.push_back(*from >> 2 & 0x3f);
+		hexa.push_back(*from << 4 & 0x30);
+		if (++from == end) return hexa;
+		hexa.back() |= *from >> 4 & 0x0f;
+		hexa.push_back(*from << 2 & 0x3c;
+		if (++from == end) return hexa;
+		hexa.back() |= *from >> 6 & 0x03;
+		hexa.push_back(*from & 0x3f);
+		return hexa;
+	}
+	std::vector<char> hexa2Octa(std::vector<char> const& hexa) const
+	{
+		std::vector<char> octa;
+		auto it = hexa.begin();
+		if (it == hexa.end()) return octa;
+		octa.push_back(*it << 2 & 0xfc);
+		if (++it == hexa.end()) return octa;
+		octa.back() |= *it >> 4 & 0x03;
+		octa.push_back(*it << 4 & 0xf0);
+		if (++it == hexa.end()) return octa;
+		octa.back() |= *it >> 2 & 0x0f;
+		octa.push_back(*it << 6 & 0xc0);
+		if (++it == hexa.end()) return octa;
+		octa.back() |= *it & 0x3f;
+		return octa;
+	}
+};
+
+Base64Converter::Base64Converter() :
+	impl{new Base64Converter::Impl{}}
+{}
+
 Base64Converter::~Base64Converter() = default;
 
 std::string Base64Converter::encode(std::string const& text) const
 {
 	std::string dist;
 	for (int i = 0; i < text.size(); i += 3) {
-		std::vector<char> bits;
-		bits.push_back(text[i] >> 2 & 0x3f);
-		bits.push_back(text[i] << 4 & 0x30 |
-			(i + 1 < text.size() ? text[i + 1] >> 4 & 0x0f : 0));
-		if (i + 1 < text.size()) {
-			bits.push_back(text[i + 1] << 2 & 0x3c |
-				(i + 2 < text.size() ? text[i + 2] >> 6 & 0x03 : 0));
-			if (i + 2 < text.size())
-				bits.push_back(text[i + 2] & 0x3f);
-		}
-		std::array<char, 4> b64 = { map.n2b(bits[0]), map.n2b(bits[1]),
-			bits.size() > 2 ? map.n2b(bits[2]) : '=',
-			bits.size() > 3 ? map.n2b(bits[3]) : '=' };
-		dist.append(b64.begin(), b64.end());
+		auto hexa = impl->octa2Hexa(text.begin() + i, text.end());
+		for (int j = 0; j < 4; j++)
+			dist.push_back(j < hexa.size() ? map.n2b(hexa[j]) : '=');
 	}
 
 	return dist;
@@ -81,14 +118,8 @@ std::string Base64Converter::decode(std::string const& text) const
 				throw Base64ConverterException("It's not a charactor of BASE64");
 			bits.push_back(c);
 		}
-		std::array<char, 3> original = { 0, 0, 0 };
-		original[0] |= bits.size() >= 1 ? bits[0] << 2 & 0xfc : 0;
-		original[0] |= bits.size() >= 2 ? bits[1] >> 4 & 0x03 : 0;
-		original[1] |= bits.size() >= 2 ? bits[1] << 4 & 0xf0 : 0;
-		original[1] |= bits.size() >= 3 ? bits[2] >> 2 & 0x0f : 0;
-		original[2] |= bits.size() >= 3 ? bits[2] << 6 & 0xc0 : 0;
-		original[2] |= bits.size() >= 4 ? bits[3] & 0x3f : 0;
-		dist.append(original.begin(), original.end());
+		auto octa = impl->hexa2Octa(bits);
+		std::move(octa.begin(), octa.end(), std::back_inserter(dist));
 	}
 
 	return dist;

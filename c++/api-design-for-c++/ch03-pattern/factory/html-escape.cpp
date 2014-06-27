@@ -14,7 +14,11 @@ class HtmlEscape::Impl {
 };
 
 struct HtmlEscape::FactoryRegister {
-	FactoryRegister() { ReversibleFactory::registFactory("html escape", [](){ return new HtmlEscape(); }); }
+	FactoryRegister()
+	{
+		ReversibleFactory::registFactory("html escape",
+			[]() -> ReversibleBase * { return new HtmlEscape(); });
+	}
 };
 
 HtmlEscape::FactoryRegister HtmlEscape::factory_register;

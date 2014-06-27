@@ -38,6 +38,9 @@ public:
 private:
 	struct Impl;
 	std::unique_ptr<Impl> impl;
+
+	struct FactoryRegister;
+	static FactoryRegister factory_register;
 };
 
 }	//namespace apides

@@ -1,7 +1,7 @@
 /**
 	@file	observer.h
 	@brief	オブザーバーオブジェクトの抽象クラス宣言
-**/
+*/
 #ifndef APIDES_OBSERVER_H
 #define APIDES_OBSERVER_H
 
@@ -12,7 +12,7 @@ namespace apides {
 class ObserverBase : private boost::noncopyable {
 public:
 	virtual ~IObserver() = default;
-	virtual void Update() = 0;
+	virtual void Update(int message) = 0;
 };
 
 }	//namespace apides

@@ -17,9 +17,8 @@ class SubjectBase : private boost::noncopyable {
 public:
 	SubjectBase();
 	virtual ~SubjectBase();
-	virtual void subscribe(int message, std::shared_ptr<ObserverBase> observer);
-	virtual void unsubscribe(int message, std::shared_ptr<ObserverBase> observer);
-	virtual void notify(int message);
+	void subscribe(int message, std::shared_ptr<ObserverBase> observer);
+	void unsubscribe(int message, std::shared_ptr<ObserverBase> observer);
 
 	class UnsubscribeException : public std::exception {
 		std::string message;
@@ -28,8 +27,21 @@ public:
 			std::exception{}, message{msg}
 		{}
 		virtual ~UnsubscribeException() = default;
-		override virtual char const* what() const { return message.c_str(); }
+		virtual char const* what() const override { return message.c_str(); }
 	};
+
+	class NotifyException : public std::exception {
+		std::string message;
+	public:
+		explicit NotifyException(char const* msg) :
+			std::exception{}, message{msg}
+		{}
+		virtual ~NotifyException() = default;
+		virtual char const* what() const override { return message.c_str(); }
+	};
+
+protected:
+	void notifyObserver(int message);
 
 private:
 	struct Impl;

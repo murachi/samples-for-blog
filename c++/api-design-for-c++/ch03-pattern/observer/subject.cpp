@@ -50,9 +50,15 @@ void SubjectBase::unsubscribe(int message, std::shared_ptr<ObserverBase> observe
 	impl->bank[message].erase(target);
 }
 
-void SubjectBase::notify(int message)
+void SubjectBase::notifyObserver(int message)
 {
 	std::lock_guard<std::mutex> lock{impl->mutex};
+
+	if (impl->bank.find(message) == impl->bank.end())
+		throw NotifyException{"Message not found"};
+
+	for (auto observer : impl->bank[message])
+		observer->notify(message);
 }
 
 }	//namespace apides

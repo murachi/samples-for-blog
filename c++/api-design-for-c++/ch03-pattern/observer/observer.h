@@ -1,7 +1,7 @@
 /**
 	@file	observer.h
 	@brief	オブザーバーオブジェクトの抽象クラス宣言
-**/
+*/
 #ifndef APIDES_OBSERVER_H
 #define APIDES_OBSERVER_H
 

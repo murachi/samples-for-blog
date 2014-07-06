@@ -72,11 +72,6 @@ void ConsoleView::initialize()
 	notifyObserver(vm_Init);
 }
 
-void ConsoleView::update()
-{
-	notifyObserver(vm_Update);
-}
-
 void ConsoleView::setTimer(std::chrono::milliseconds ms)
 {
 	// 既存のタイマースレッドがある場合は、スレッドの終了を待機する

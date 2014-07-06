@@ -18,7 +18,6 @@ class ConsoleView : public SubjectBase {
 public:
 	enum ViewMessage {
 		vm_Init,
-		vm_Update,
 		vm_Timer,
 	}
 
@@ -33,7 +32,6 @@ public:
 	virtual ~ConsoleView();
 
 	void initialize();
-	void update();
 	void setTimer(std::chrono::milliseconds const& ms);
 	void stopTimer();
 	void setInterval(std::chrono::milliseconds const& ms);

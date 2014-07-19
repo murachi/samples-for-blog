@@ -30,8 +30,11 @@ public:
 		std::vector<std::string> values;
 	};
 
+	Detail getDetail() const;
+	void replaceDetail(Detail const& detail);
+
 	template <typename ModFunc>
-	Data & modify(ModFunc func);
+	Data & modify(ModFunc func)	{ replaceDetail(func(getDetail())); return *this; }
 
 	struct DetailReference {
 		std::vector<std::string> & keys;

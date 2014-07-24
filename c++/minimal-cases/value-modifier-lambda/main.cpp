@@ -25,7 +25,7 @@ int main()
 	std::string birth{"1978/2/7"};
 	std::string company{"株式会社はらぺこ"};
 
-	data.modify([birth, company](minimum::Data::Detail detail){
+	data.modify([&birth, &company](minimum::Data::Detail detail){
 		detail.keys.erase(detail.keys.begin() + 1);
 		auto role = detail.values[1];
 		detail.values.erase(detail.values.begin() + 1);

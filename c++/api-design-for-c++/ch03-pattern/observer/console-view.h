@@ -37,8 +37,7 @@ public:
 	void setInterval(std::chrono::milliseconds const& ms);
 	void stopInterval();
 
-	typedef void (*StateChangeFunc)(ViewState &);
-	void setStatus(StateChangeFunc func);
+	void setStatus(std::function<void(ViewStatus &)> func);
 };
 
 }	//namespace apides

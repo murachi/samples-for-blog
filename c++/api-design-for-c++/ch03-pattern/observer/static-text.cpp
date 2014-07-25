@@ -13,7 +13,7 @@ struct StaticText::Impl {
 StaticText::StaticText(int x, int y, int color, std::string const& text) :
 	ConsoleView{}
 {
-	setStatus([x, y, color, const& text](ViewStatus &stat){
+	setStatus([&](ConsoleView::ViewStatus &stat){
 		stat.x = x;
 		stat.y = y;
 		stat.color = color;
@@ -25,7 +25,7 @@ StaticText::~StaticText() = default;
 
 void StaticText::changeText(std::string const& text)
 {
-	setStatus([const& text](ViewStatus &stat){
+	setStatus([&text](ConsoleView::ViewStatus &stat){
 		stat.text = text;
 	});
 }

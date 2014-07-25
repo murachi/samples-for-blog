@@ -116,14 +116,19 @@ void ConsoleView::stopInterval()
 	impl->notifyStopInterval();
 }
 
-void ConsoleView::setStatus(ConsoleView::StateChangeFunc func)
+ConsoleView::ViewStatus ConsoleView::getStatus() const
 {
-	auto stat = impl->status;
-	func(&stat);
-	if (stat == impl->status) return;
+	return impl->status;
+}
+
+void ConsoleView::setStatus(std::function<void(ConsoleView::ViewStatus &)> func)
+{
+	auto status = impl->status;
+	func(status);
+	if (status == impl->status) return;
 
 	impl->remove();
-	impl->status = stat;
+	impl->status = status;
 	impl->draw();
 }
 

@@ -11,7 +11,8 @@
 namespace apides {
 
 struct ConsoleView::Impl {
-	ViewState status;
+	ConsoleManager const& console;
+	ViewStatus status;
 
 	std::thread timer_thread;
 	std::thread interval_thread;
@@ -20,8 +21,8 @@ struct ConsoleView::Impl {
 	std::mutex mutex_want_stop_timer;
 	std::mutex mutex_want_stop_interval;
 
-	Impl() :
-		status{0, 0, std::string{}, 7},
+	explicit Impl(ConsoleManager const& manager) :
+		console{manager}, status{0, 0, std::string{}, 7},
 		timer_thread{}, interval_thread{}, want_stop_timer{false}, want_stop_interval{false}
 	{}
 	~Impl();
@@ -53,20 +54,17 @@ ConsoleView::Impl::~Impl()
 
 void ConsoleView::Impl::remove() const
 {
-	// 実際の描画削除処理
-#ifdef _WIN32
-	
-#else	//_WIN32
-#endif	//_WIN32
+	std::string space{impl->status.text.size(), ' '};
+	console.output(ConsoleManager::OutputInfo{impl->status.x, impl->status.y, space, 7});
 }
 
 void ConsoleView::Impl::draw() const
 {
-	// 実際の描画処理
+	console.output(impl->status);
 }
 
-ConsoleView::ConsoleView() :
-	impl{new ConsoleView::Impl{}}
+ConsoleView::ConsoleView(ConsoleManager const& manager) :
+	impl{new ConsoleView::Impl{manager}}
 {
 }
 

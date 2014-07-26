@@ -7,6 +7,7 @@
 #define APIDES_STATIC_TEXT_H
 
 #include "console-view.h"
+#include "console-manager.h"
 #include <memory>
 #include <string>
 #include <boost/noncopyable.hpp>
@@ -19,7 +20,7 @@ class StaticText : public ConsoleView, private boost::noncopyable {
 
 public:
 	StaticText() = delete;
-	StaticText(int x, int y, int color, std::string const& text);
+	StaticText(ConsoleManager const& manager, int x, int y, int color, std::string const& text);
 	virtual ~StaticText();
 
 	void changeText(std::string const& text);

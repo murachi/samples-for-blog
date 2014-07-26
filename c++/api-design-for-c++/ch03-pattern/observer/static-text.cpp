@@ -10,8 +10,8 @@ namespace apides {
 struct StaticText::Impl {
 };
 
-StaticText::StaticText(int x, int y, int color, std::string const& text) :
-	ConsoleView{}
+StaticText::StaticText(ConsoleManager const& manager, int x, int y, int color, std::string const& text) :
+	ConsoleView{manager}
 {
 	setStatus([&](ConsoleView::ViewStatus &stat){
 		stat.x = x;
@@ -25,7 +25,7 @@ StaticText::~StaticText() = default;
 
 void StaticText::changeText(std::string const& text)
 {
-	setStatus([&text](ConsoleView::ViewStatus &stat){
+	setStatus([&](ConsoleView::ViewStatus &stat){
 		stat.text = text;
 	});
 }

@@ -23,7 +23,7 @@ public:
 		vm_Timer,
 	}
 
-	ConsoleView();
+	explicit ConsoleView(ConsoleManager const& manager);
 	virtual ~ConsoleView();
 
 	void initialize();

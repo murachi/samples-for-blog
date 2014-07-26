@@ -4,6 +4,7 @@
 */
 
 #include "console-view.h"
+#include "console-manager.h"
 #include <thread>
 #include <mutex>
 
@@ -53,6 +54,10 @@ ConsoleView::Impl::~Impl()
 void ConsoleView::Impl::remove() const
 {
 	// 実際の描画削除処理
+#ifdef _WIN32
+	
+#else	//_WIN32
+#endif	//_WIN32
 }
 
 void ConsoleView::Impl::draw() const

@@ -6,6 +6,8 @@
 #ifndef APIDES_CONSOLE_VIEW_H
 #define APIDES_CONSOLE_VIEW_H
 
+#include "console-manager.h"
+
 #include <string>
 #include <chrono>
 
@@ -21,13 +23,6 @@ public:
 		vm_Timer,
 	}
 
-	struct ViewStatus {
-		int x;
-		int y;
-		std::string text;
-		int color;
-	};
-
 	ConsoleView();
 	virtual ~ConsoleView();
 
@@ -36,6 +31,8 @@ public:
 	void stopTimer();
 	void setInterval(std::chrono::milliseconds const& ms);
 	void stopInterval();
+
+	typedef ConsoleManager::OutputInfo ViewStatus;
 
 	void setStatus(std::function<void(ViewStatus &)> func);
 };

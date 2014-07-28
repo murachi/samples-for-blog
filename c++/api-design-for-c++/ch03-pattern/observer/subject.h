@@ -27,7 +27,7 @@ public:
 			std::exception{}, message{msg}
 		{}
 		virtual ~UnsubscribeException() = default;
-		virtual char const* what() const override { return message.c_str(); }
+		virtual char const* what() const noexcept override { return message.c_str(); }
 	};
 
 	class NotifyException : public std::exception {
@@ -37,7 +37,7 @@ public:
 			std::exception{}, message{msg}
 		{}
 		virtual ~NotifyException() = default;
-		virtual char const* what() const override { return message.c_str(); }
+		virtual char const* what() const noexcept override { return message.c_str(); }
 	};
 
 protected:

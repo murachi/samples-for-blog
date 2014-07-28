@@ -6,6 +6,7 @@
 #include "console-manager.h"
 
 #include <memory>
+#include <iostream>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -88,6 +89,11 @@ void ConsoleManager::output(ConsoleManager::OutputInfo const& info) const
 #endif	//_WIN32
 	// テキスト本体を出力
 	std::cout << info.text << std::flush;
+}
+
+bool operator==(ConsoleManager::OutputInfo const& lhs, ConsoleManager::OutputInfo const& rhs)
+{
+	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.text == rhs.text && lhs.color == rhs.color;
 }
 
 }	//namespace apides

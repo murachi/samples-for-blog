@@ -11,7 +11,7 @@
 namespace apides {
 
 struct ConsoleView::Impl {
-	ConsoleManager const& console;
+	ConsoleManager const* console;
 	ViewStatus status;
 
 	std::thread timer_thread;
@@ -22,12 +22,19 @@ struct ConsoleView::Impl {
 	std::mutex mutex_want_stop_interval;
 
 	explicit Impl(ConsoleManager const& manager) :
-		console{manager}, status{0, 0, std::string{}, 7},
+		console{&manager}, status{0, 0, std::string{}, 7},
 		timer_thread{}, interval_thread{}, want_stop_timer{false}, want_stop_interval{false}
 	{}
 	~Impl();
-	void remove() const;
-	void draw() const;
+	void remove() const
+	{
+		std::string space(status.text.size(), ' ');
+		console->output(ConsoleManager::OutputInfo{status.x, status.y, space, 7});
+	}
+	void draw() const
+	{
+		console->output(status);
+	}
 	void notifyStopTimer(bool is_stop = true)
 	{
 		std::lock_guard<std::mutex> lock(mutex_want_stop_timer);
@@ -52,17 +59,6 @@ ConsoleView::Impl::~Impl()
 	}
 }
 
-void ConsoleView::Impl::remove() const
-{
-	std::string space{impl->status.text.size(), ' '};
-	console.output(ConsoleManager::OutputInfo{impl->status.x, impl->status.y, space, 7});
-}
-
-void ConsoleView::Impl::draw() const
-{
-	console.output(impl->status);
-}
-
 ConsoleView::ConsoleView(ConsoleManager const& manager) :
 	impl{new ConsoleView::Impl{manager}}
 {
@@ -75,7 +71,7 @@ void ConsoleView::initialize()
 	notifyObserver(vm_Init);
 }
 
-void ConsoleView::setTimer(std::chrono::milliseconds ms)
+void ConsoleView::setTimer(std::chrono::milliseconds const& ms)
 {
 	// 既存のタイマースレッドがある場合は、スレッドの終了を待機する
 	if (impl->timer_thread.joinable()) {
@@ -97,7 +93,7 @@ void ConsoleView::stopTimer()
 	impl->notifyStopTimer();
 }
 
-void ConsoleView::setInterval(std::chrono::milliseconds ms)
+void ConsoleView::setInterval(std::chrono::milliseconds const& ms)
 {
 	// 既存のインターバルタイマースレッドがある場合は、スレッドの終了を待機する
 	if (impl->interval_thread.joinable()) {
@@ -117,11 +113,6 @@ void ConsoleView::setInterval(std::chrono::milliseconds ms)
 void ConsoleView::stopInterval()
 {
 	impl->notifyStopInterval();
-}
-
-ConsoleView::ViewStatus ConsoleView::getStatus() const
-{
-	return impl->status;
 }
 
 void ConsoleView::setStatus(std::function<void(ConsoleView::ViewStatus &)> func)

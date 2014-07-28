@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 #include <boost/noncopyable.hpp>
-#include <boost/datetime.hpp>
+#include <boost/date_time.hpp>
 
 namespace apides {
 
@@ -23,7 +23,7 @@ public:
 
 	std::string toString() const;
 
-	void updateNow();
+	DateTime & updateNow();
 };
 
 }	//namespace apides

@@ -36,6 +36,7 @@ std::string DateTime::toString() const
 void DateTime::updateNow()
 {
 	impl->time = boost::posix_time::second_clock::local_time();
+	return *this;
 }
 
 }	//namespace apides

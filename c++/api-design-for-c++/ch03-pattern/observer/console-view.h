@@ -6,8 +6,10 @@
 #ifndef APIDES_CONSOLE_VIEW_H
 #define APIDES_CONSOLE_VIEW_H
 
+#include "subject.h"
 #include "console-manager.h"
 
+#include <memory>
 #include <string>
 #include <chrono>
 
@@ -21,7 +23,7 @@ public:
 	enum ViewMessage {
 		vm_Init,
 		vm_Timer,
-	}
+	};
 
 	explicit ConsoleView(ConsoleManager const& manager);
 	virtual ~ConsoleView();
@@ -32,8 +34,7 @@ public:
 	void setInterval(std::chrono::milliseconds const& ms);
 	void stopInterval();
 
-	typedef ConsoleManager::OutputInfo ViewStatus;
-
+	using ViewStatus = ConsoleManager::OutputInfo;
 	void setStatus(std::function<void(ViewStatus &)> func);
 };
 

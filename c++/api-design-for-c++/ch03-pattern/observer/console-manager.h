@@ -19,7 +19,7 @@ class ConsoleManager : private boost::noncopyable {
 
 public:
 	ConsoleManager();
-	~ConsoleManager()
+	~ConsoleManager();
 
 	struct ConsoleSize {
 		int width;
@@ -35,6 +35,8 @@ public:
 	};
 	void output(OutputInfo const& info) const;
 };
+
+extern bool operator==(ConsoleManager::OutputInfo const& lhs, ConsoleManager::OutputInfo const& rhs);
 
 }	//namespace apides
 

@@ -9,8 +9,9 @@
 
 namespace apides {
 
+namespace p_time = boost::posix_time;
+
 struct DateTime::Impl {
-	using p_time = boost::posix_time;
 	p_time::ptime time;
 	std::stringstream ss;
 
@@ -26,6 +27,8 @@ DateTime::DateTime(boost::posix_time::ptime const& time) :
 	impl{new DateTime::Impl{time}}
 {}
 
+DateTime::~DateTime() = default;
+
 std::string DateTime::toString() const
 {
 	impl->ss.str("");
@@ -33,7 +36,7 @@ std::string DateTime::toString() const
 	return impl->ss.str();
 }
 
-void DateTime::updateNow()
+DateTime & DateTime::updateNow()
 {
 	impl->time = boost::posix_time::second_clock::local_time();
 	return *this;

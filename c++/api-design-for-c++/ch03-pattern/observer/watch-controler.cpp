@@ -13,9 +13,9 @@ namespace apides {
 
 struct WatchControler::Impl {
 	DateTime datetime;
-	StaticText & text_view;
+	StaticText * text_view;
 
-	Impl(StaticText & view) : datetime{}, text_view{view} {}
+	Impl(StaticText & view) : datetime{}, text_view{&view} {}
 };
 
 WatchControler::WatchControler(StaticText & text_view)
@@ -33,10 +33,10 @@ void WatchControler::notify(int message)
 {
 	switch (message) {
 	case ConsoleView::vm_Init:
-		impl->text_view.setInterval(std::chrono::millisecond{50});
+		impl->text_view->setInterval(std::chrono::milliseconds{50});
 		break;
 	case ConsoleView::vm_Timer:
-		impl->text_view.changeText(datetime.updateNow().toString());
+		impl->text_view->changeText(impl->datetime.updateNow().toString());
 		break;
 	}
 }

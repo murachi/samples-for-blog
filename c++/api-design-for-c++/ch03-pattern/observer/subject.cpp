@@ -32,7 +32,7 @@ void SubjectBase::subscribe(int message, std::shared_ptr<ObserverBase> observer)
 	std::lock_guard<std::mutex> lock{impl->mutex};
 
 	if (impl->bank.find(message) == impl->bank.end())
-		impl->bank[message] = Impl::ObserverMap{};
+		impl->bank[message] = Impl::ObserverList{};
 	impl->bank[message].push_back(observer);
 }
 
@@ -43,7 +43,7 @@ void SubjectBase::unsubscribe(int message, std::shared_ptr<ObserverBase> observe
 	if (impl->bank.find(message) == impl->bank.end())
 		throw UnsubscribeException{"Message not found"};
 	auto target = std::find_if(impl->bank[message].begin(), impl->bank[message].end(),
-		[observer](auto elem){ return elem == observer; });
+		[observer](std::shared_ptr<ObserverBase> elem){ return elem == observer; });
 	if (target == impl->bank[message].end())
 		throw UnsubscribeException{"Observer not found"};
 

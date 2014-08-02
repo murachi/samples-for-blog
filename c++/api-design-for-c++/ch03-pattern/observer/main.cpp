@@ -38,7 +38,7 @@ int main()
 		struct timeval tv{0, 50};	// 50ms ごとにキー入力を監視
 
 		// 何かしらキー入力があったら終了
-		while (var retval = select(1, &rdfs, nullptr, nullptr, &tv))
+		while (auto retval = select(1, &rdfs, nullptr, nullptr, &tv))
 		{
 			if (retval == -1) {
 				std::cerr << "select error" << std::endl;

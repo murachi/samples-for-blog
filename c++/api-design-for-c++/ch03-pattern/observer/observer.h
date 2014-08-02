@@ -11,7 +11,7 @@ namespace apides {
 
 class ObserverBase : private boost::noncopyable {
 public:
-	virtual ~IObserver() = default;
+	virtual ~ObserverBase() = default;
 	virtual void notify(int message) = 0;
 };
 

@@ -14,7 +14,7 @@
 
 namespace apides {
 
-class StaticText : public ConsoleView, private boost::noncopyable {
+class StaticText : public ConsoleView {
 	struct Impl;
 	std::unique_ptr<Impl> impl;
 

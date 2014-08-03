@@ -36,7 +36,7 @@ struct ConsoleManager::Impl {
 			coord, &count);
 #else	//_WIN32
 		// コンソールをクリア
-		std::cout << "\f" << std::flush;
+		std::cout << "\x1b[2J" << std::flush;
 #endif	//_WIN32
 	}
 	~Impl()
@@ -47,7 +47,7 @@ struct ConsoleManager::Impl {
 			FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 #else	//_WIN32
 		// 色だけ戻す
-		std::cout << "\x1b[37m";
+		std::cout << "\x1b[39m";
 #endif	//_WIN32
 		std::cout << std::endl;
 	}

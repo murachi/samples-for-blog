@@ -24,22 +24,26 @@ int main()
 	auto xpos = size.width / 2 - 9;
 	apides::StaticText text_view{console, xpos > 0 ? xpos : 0, size.height / 2, 2, ""};
 	apides::WatchControler controler{text_view};
+	text_view.initialize();
 
 	std::thread wait_thread{[](){
-		struct termios pre;
+		using TermIos = struct termios;
+		TermIos pre;
 		tcgetattr(STDIN_FILENO, &pre);
-		struct termios raw = pre;
+		TermIos raw = pre;
 		cfmakeraw(&raw);
 		tcsetattr(STDIN_FILENO, 0, &raw);
+		auto term_restorer = [](TermIos * p){ tcsetattr(STDIN_FILENO, 0, p); };
+		std::unique_ptr<TermIos, decltype(term_restorer)> tc_restorer{&pre, term_restorer};
 
 		fd_set rdfs;
 		FD_ZERO(&rdfs);
 		FD_SET(0, &rdfs);
-		struct timeval tv{0, 50};	// 50ms ごとにキー入力を監視
 
 		// 何かしらキー入力があったら終了
-		while (auto retval = select(1, &rdfs, nullptr, nullptr, &tv))
+		for (;;)
 		{
+			auto retval = select(1, &rdfs, nullptr, nullptr, nullptr);
 			if (retval == -1) {
 				std::cerr << "select error" << std::endl;
 				return;

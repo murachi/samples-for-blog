@@ -34,6 +34,8 @@ public:
 		int color;
 	};
 	void output(OutputInfo const& info) const;
+
+	int waitKeyInput() const;
 };
 
 extern bool operator==(ConsoleManager::OutputInfo const& lhs, ConsoleManager::OutputInfo const& rhs);

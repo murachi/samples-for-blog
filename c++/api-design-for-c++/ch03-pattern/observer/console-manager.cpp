@@ -7,12 +7,17 @@
 
 #include <memory>
 #include <iostream>
+#include <cstdio>
 
 #ifdef _WIN32
 #include <windows.h>
 #else	//_WIN32
 #include <sys/ioctl.h>
+#include <termios.h>
 #include <unistd.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
 #endif	//_WIN32
 
 namespace apides {
@@ -89,6 +94,32 @@ void ConsoleManager::output(ConsoleManager::OutputInfo const& info) const
 #endif	//_WIN32
 	// テキスト本体を出力
 	std::cout << info.text << std::flush;
+}
+
+int ConsoleManager::waitKeyInput() const
+{
+#ifdef _WIN32
+#else	//_WIN32
+	using TermIos = struct termios;
+	TermIos pre;
+	tcgetattr(STDIN_FILENO, &pre);
+	TermIos raw = pre;
+	cfmakeraw(&raw);
+	tcsetattr(STDIN_FILENO, 0, &raw);
+	auto term_restorer = [](TermIos * p){ tcsetattr(STDIN_FILENO, 0, p); };
+	std::unique_ptr<TermIos, decltype(term_restorer)> tc_restorer{&pre, term_restorer};
+
+	fd_set rdfs;
+	FD_ZERO(&rdfs);
+	FD_SET(0, &rdfs);
+
+	auto retval = select(1, &rdfs, nullptr, nullptr, nullptr);
+	if (retval == -1) {
+		std::cerr << "select error" << std::endl;
+		return -1;
+	}
+	return std::fgetc(stdin);
+#endif	//_WIN32
 }
 
 bool operator==(ConsoleManager::OutputInfo const& lhs, ConsoleManager::OutputInfo const& rhs)

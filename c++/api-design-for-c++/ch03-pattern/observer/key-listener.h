@@ -27,6 +27,9 @@ public:
 	virtual void initialize() override;
 
 	int getKeyChar(bool wants_more = false);
+
+private:
+	void listen();
 };
 
 }	//namespace apides

@@ -1,9 +1,9 @@
 /**
-	@file	watch-controler.h
+	@file	watch-controller.h
 	@brief	時計表示処理コントローラオブジェクトクラス宣言
 */
-#ifndef APIDES_WATCH_CONTROLER_H
-#define APIDES_WATCH_CONTROLER_H
+#ifndef APIDES_WATCH_CONTROLLER_H
+#define APIDES_WATCH_CONTROLLER_H
 
 #include "observer.h"
 #include "static-text.h"
@@ -13,17 +13,17 @@
 
 namespace apides {
 
-class WatchControler : public ObserverBase {
+class WatchController : public ObserverBase {
 	struct Impl;
 	std::unique_ptr<Impl> impl;
 
 public:
-	explicit WatchControler(StaticText &text_view);
-	virtual ~WatchControler();
+	explicit WatchController(StaticText &text_view);
+	virtual ~WatchController();
 
 	virtual void notify(int message) override;
 };
 
 }	//namespace apides
 
-#endif	//APIDES_WATCH_CONTROLER_H
+#endif	//APIDES_WATCH_CONTROLLER_H

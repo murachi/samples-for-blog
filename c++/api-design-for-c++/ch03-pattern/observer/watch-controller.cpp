@@ -1,9 +1,9 @@
 /**
-	@file	watch-controler.cpp
+	@file	watch-controller.cpp
 	@brief	時計表示処理コントローラオブジェクトクラス実装
 */
 
-#include "watch-controler.h"
+#include "watch-controller.h"
 #include "datetime.h"
 #include "static-text.h"
 
@@ -11,15 +11,15 @@
 
 namespace apides {
 
-struct WatchControler::Impl {
+struct WatchController::Impl {
 	DateTime datetime;
 	StaticText * text_view;
 
 	Impl(StaticText & view) : datetime{}, text_view{&view} {}
 };
 
-WatchControler::WatchControler(StaticText & text_view)
-	: impl{new WatchControler::Impl{text_view}}
+WatchController::WatchController(StaticText & text_view)
+	: impl{new WatchController::Impl{text_view}}
 {
 	text_view.subscribe(ConsoleView::vm_Init,
 		std::shared_ptr<ObserverBase>{this, [](ObserverBase *){}});
@@ -27,9 +27,9 @@ WatchControler::WatchControler(StaticText & text_view)
 		std::shared_ptr<ObserverBase>{this, [](ObserverBase *){}});
 }
 
-WatchControler::~WatchControler() = default;
+WatchController::~WatchController() = default;
 
-void WatchControler::notify(int message)
+void WatchController::notify(int message)
 {
 	switch (message) {
 	case ConsoleView::vm_Init:

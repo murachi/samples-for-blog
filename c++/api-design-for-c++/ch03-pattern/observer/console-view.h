@@ -36,6 +36,8 @@ public:
 
 	using ViewStatus = ConsoleManager::OutputInfo;
 	void setStatus(std::function<void(ViewStatus &)> func);
+
+	ConsoleManager::ConsoleSize getConsoleSize() const;
 };
 
 }	//namespace apides

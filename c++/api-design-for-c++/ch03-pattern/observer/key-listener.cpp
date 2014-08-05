@@ -17,16 +17,9 @@ struct KeyListener::Impl {
 	std::thread listener_thread;
 
 	explicit Impl(ConsoleManager const& manager) : console{&manager} {}
-	void listen(SubjectBase * self)
-	{
-		listener_thread = std::thread([=](){
-			key_buffer.push(console->waitKeyInput());
-			self->notifyObserver(vm_KeyInput);
-		});
-	}
 };
 
-KeyListener::Keylistener(ConsoleManager const& manager)
+KeyListener::KeyListener(ConsoleManager const& manager)
 	: ConsoleView{manager}, impl{new Impl{manager}}
 {}
 
@@ -34,16 +27,24 @@ KeyListener::~KeyListener() = default;
 
 void KeyListener::initialize()
 {
-	impl->listen(this);
+	listen();
 	ConsoleView::initialize();
 }
 
-int KeyLIstener::getKeyChar(bool wants_more)
+int KeyListener::getKeyChar(bool wants_more)
 {
 	int c = impl->key_buffer.front();
 	impl->key_buffer.pop();
-	if (wants_more) impl->listen(this);
+	if (wants_more) listen();
 	return c;
+}
+
+void KeyListener::listen()
+{
+	impl->listener_thread = std::thread([this](){
+		impl->key_buffer.push(impl->console->waitKeyInput());
+		notifyObserver(vm_KeyInput);
+	});
 }
 
 }	//namespace apides

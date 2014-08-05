@@ -126,5 +126,10 @@ void ConsoleView::setStatus(std::function<void(ConsoleView::ViewStatus &)> func)
 	impl->draw();
 }
 
+ConsoleManager::ConsoleSize ConsoleView::getConsoleSize() const
+{
+	return impl->console->getSize();
+}
+
 }	//namespace apides
 

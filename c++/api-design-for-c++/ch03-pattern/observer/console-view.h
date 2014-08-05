@@ -21,14 +21,14 @@ class ConsoleView : public SubjectBase {
 
 public:
 	enum ViewMessage {
-		vm_Init,
+		vm_Init = 100,
 		vm_Timer,
 	};
 
 	explicit ConsoleView(ConsoleManager const& manager);
 	virtual ~ConsoleView();
 
-	void initialize();
+	virtual void initialize();
 	void setTimer(std::chrono::milliseconds const& ms);
 	void stopTimer();
 	void setInterval(std::chrono::milliseconds const& ms);

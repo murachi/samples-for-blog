@@ -99,6 +99,7 @@ void ConsoleManager::output(ConsoleManager::OutputInfo const& info) const
 int ConsoleManager::waitKeyInput() const
 {
 #ifdef _WIN32
+	return std::_getch();
 #else	//_WIN32
 	using TermIos = struct termios;
 	TermIos pre;

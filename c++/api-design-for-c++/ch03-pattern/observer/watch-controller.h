@@ -9,7 +9,6 @@
 #include "static-text.h"
 
 #include <memory>
-#include <boost/noncopyable.hpp>
 
 namespace apides {
 

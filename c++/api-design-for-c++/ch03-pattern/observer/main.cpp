@@ -9,22 +9,12 @@
 #include "watch-controller.h"
 #include "wait-controller.h"
 
-#include <thread>
-#include <termios.h>
-#include <unistd.h>
-#include <sys/select.h>
-#include <sys/time.h>
-#include <sys/types.h>
-
-#include <iostream>
-#include <cstdio>
-
 int main()
 {
 	apides::ConsoleManager console;
 	auto size = console.getSize();
 	auto xpos = size.width / 2 - 9;
-	apides::StaticText text_view{console, xpos > 0 ? xpos : 0, size.height / 2, 2, ""};
+	apides::StaticText text_view{console, xpos > 0 ? xpos : 0, size.height / 2, 7, ""};
 	apides::WatchController controller{text_view};
 	text_view.initialize();
 

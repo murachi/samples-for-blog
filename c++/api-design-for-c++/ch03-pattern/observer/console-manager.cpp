@@ -90,7 +90,7 @@ void ConsoleManager::output(ConsoleManager::OutputInfo const& info) const
 		(info.color & 4 ? FOREGROUND_BLUE : 0));
 #else	//_WIN32
 	// カーソル位置、文字色
-	std::cout << "\x1b[" << info.y << ";" << info.x << "H";
+	std::cout << "\x1b[" << info.y << ";" << info.x << "H\x1b[3" << info.color << "m";
 #endif	//_WIN32
 	// テキスト本体を出力
 	std::cout << info.text << std::flush;

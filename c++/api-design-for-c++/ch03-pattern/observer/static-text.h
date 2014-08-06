@@ -10,7 +10,6 @@
 #include "console-manager.h"
 #include <memory>
 #include <string>
-#include <boost/noncopyable.hpp>
 
 namespace apides {
 

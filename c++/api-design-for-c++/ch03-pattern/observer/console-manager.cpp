@@ -11,6 +11,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#include <conio.h>
 #else	//_WIN32
 #include <sys/ioctl.h>
 #include <termios.h>
@@ -37,7 +38,7 @@ struct ConsoleManager::Impl {
 		DWORD count;
 		CONSOLE_SCREEN_BUFFER_INFO csbi;
 		GetConsoleScreenBufferInfo(console_handle, &csbi);
-		FillConsoleOutputCharactor(hStdOut, ' ', csbi.dwSize.X * csbi.dwSize.Y,
+		FillConsoleOutputCharacter(console_handle, ' ', csbi.dwSize.X * csbi.dwSize.Y,
 			coord, &count);
 #else	//_WIN32
 		// コンソールをクリア
@@ -68,8 +69,12 @@ ConsoleManager::ConsoleSize ConsoleManager::getSize() const
 {
 #ifdef _WIN32
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	GetConsoleScreenBufferInfo(console_handle, &csbi);
-	return ConsoleSize{static_cast<int>(csbi.dwSize.X), static_cast<int>(csbi.dwSize.Y)};
+	GetConsoleScreenBufferInfo(impl->console_handle, &csbi);
+	auto &rect = csbi.srWindow;
+	return ConsoleSize{
+		static_cast<int>(rect.Right - rect.Left),
+		static_cast<int>(rect.Bottom - rect.Top)
+	};
 #else	//_WIN32
 	struct winsize winsz;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &winsz);
@@ -80,11 +85,17 @@ ConsoleManager::ConsoleSize ConsoleManager::getSize() const
 void ConsoleManager::output(ConsoleManager::OutputInfo const& info) const
 {
 #ifdef _WIN32
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(impl->console_handle, &csbi);
+	auto &rect = csbi.srWindow;
 	// カーソル位置
-	COORD coord{static_cast<SHORT>(info.x), static_cast<SHORT>(info.y)};
-	SetConsoleCursorPosition(console_handle, coord);
+	COORD coord{
+		static_cast<SHORT>(info.x + rect.Left),
+		static_cast<SHORT>(info.y + rect.Top)
+	};
+	SetConsoleCursorPosition(impl->console_handle, coord);
 	// 文字色
-	SetConsoleTextAttribute(console_handle,
+	SetConsoleTextAttribute(impl->console_handle,
 		(info.color & 1 ? FOREGROUND_RED : 0) |
 		(info.color & 2 ? FOREGROUND_GREEN : 0) |
 		(info.color & 4 ? FOREGROUND_BLUE : 0));
@@ -99,7 +110,7 @@ void ConsoleManager::output(ConsoleManager::OutputInfo const& info) const
 int ConsoleManager::waitKeyInput() const
 {
 #ifdef _WIN32
-	return std::_getch();
+	return _getch();
 #else	//_WIN32
 	using TermIos = struct termios;
 	TermIos pre;

@@ -14,8 +14,8 @@ my $get_options = Getopt::Compact->new(
 		[[qw(d namespace domain)], 'Specify a name of namespace (domain)', '=s'],
 		[[qw(s summary)], 'Write summary of class', ':s'],
 		[[qw(e extends)], 'List of extended classes', ':s'],
-		[[qw(C copy)], 'Generate copy constructor placement'],
-		[[qw(M move)], 'Generate move constructor placement'],
+		[[qw(C copy)], 'Generate copy constructor place holder'],
+		[[qw(M move)], 'Generate move constructor place holder'],
 	],
 	configure => { posix_default => 1, ignore_case => 0, gnu_compat => 1, bundling => 1 },
 );

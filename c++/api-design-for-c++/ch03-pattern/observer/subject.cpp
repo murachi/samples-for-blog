@@ -52,12 +52,17 @@ void SubjectBase::unsubscribe(int message, std::shared_ptr<ObserverBase> observe
 
 void SubjectBase::notifyObserver(int message)
 {
-	std::lock_guard<std::mutex> lock{impl->mutex};
+	Impl::ObserverList observer_list;
+	{
+		std::lock_guard<std::mutex> lock{impl->mutex};
 
-	if (impl->bank.find(message) == impl->bank.end())
-		throw NotifyException{"Message not found"};
+		if (impl->bank.find(message) == impl->bank.end())
+			throw NotifyException{"Message not found"};
 
-	for (auto observer : impl->bank[message])
+		observer_list = impl->bank[message];
+	}
+
+	for (auto observer : observer_list)
 		observer->notify(message);
 }
 

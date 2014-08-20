@@ -17,6 +17,11 @@ struct KeyListener::Impl {
 	std::thread listener_thread;
 
 	explicit Impl(ConsoleManager const& manager) : console{&manager} {}
+	~Impl()
+	{
+		if (listener_thread.joinable())
+			listener_thread.detach();
+	}
 };
 
 KeyListener::KeyListener(ConsoleManager const& manager)

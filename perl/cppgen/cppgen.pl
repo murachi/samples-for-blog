@@ -7,7 +7,7 @@ use Getopt::Compact;
 
 my $get_options = Getopt::Compact->new(
 	name => 'C++ File Template Generator',
-	version => '0.1.0',
+	version => '0.2.0',
 	modes => [qw(pimpl interface virtual noncopyable)],
 	struct => [
 		[[qw(c classname)], 'Specify a name of class', '=s'],

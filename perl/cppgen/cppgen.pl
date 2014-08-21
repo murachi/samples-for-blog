@@ -12,10 +12,11 @@ my $get_options = Getopt::Compact->new(
 	struct => [
 		[[qw(c classname)], 'Specify a name of class', '=s'],
 		[[qw(d namespace domain)], 'Specify a name of namespace (domain)', '=s'],
-		[[qw(s summary)], 'Write summary of class', ':s'],
-		[[qw(e extends)], 'List of extended classes', ':s'],
+		[[qw(s summary)], 'Write summary of class', '=s'],
+		[[qw(e extends)], 'List of extended classes', '=s'],
 		[[qw(C copy)], 'Generate copy constructor place holder'],
 		[[qw(M move)], 'Generate move constructor place holder'],
+		[[qw(t template)], 'Generate template class. Specify template parameters', ':s'],
 	],
 	configure => { posix_default => 1, ignore_case => 0, gnu_compat => 1, bundling => 1 },
 );
@@ -28,9 +29,23 @@ if (!defined $opts->{classname} || !defined $opts->{namespace}) {
 	exit 1;
 }
 
+# template モードを使用する場合、抽象クラスになるような操作との併用は不可
+if (defined $opts->{template} && ($opts->{virtual} || $opts->{interface} || $opts->{extends})) {
+	print "$0: Can't generate template (-t) virtual (-v or -i or -e) class.\n";
+	print $get_options->usage;
+	exit 1;
+}
+
 # interface モードと pimpl モードは混在不可
 if ($opts->{interface} && $opts->{pimpl}) {
 	print "$0: Can't select both modes of -i and -p.\n";
+	print $get_options->usage;
+	exit 1;
+}
+
+# template モードと pimpl モードも混在不可
+if (defined $opts->{template} && $opts->{pimpl}) {
+	print "$0: Can't select both options of -t and -p.\n";
 	print $get_options->usage;
 	exit 1;
 }
@@ -53,6 +68,8 @@ my @extend_h_files = map { local $_ = $_; s/^[A-Z]/lc $&/e; s/[A-Z]/'-' . lc $&/
 my ($is_pimpl, $is_interface, $is_virtual, $is_noncopyable, $is_copy_constructor, $is_move_constructor)
 	= @$opts{qw(pimpl interface virtual noncopyable copy move)};
 $is_virtual = $is_virtual || $is_interface || @extends;
+my $is_template = defined $opts->{template};
+my $template_params = $opts->{template};
 
 open my $FH, '>', "$file_title.h" or die "Can't open file $file_title.h";
 print $FH <<ENDLINE;
@@ -67,7 +84,7 @@ ENDLINE
 print $FH qq(#include "$_"\n) for @extend_h_files;
 print $FH "\n" if @extend_h_files;
 print $FH "#include <memory>\n" if $is_pimpl;
-print $FH "#include <boost/noncopyable.hpp>\n" if $is_noncopyable;
+print $FH "#include <boost/noncopyable.hpp>\n" if $is_noncopyable && !$is_template;
 print $FH "\n" if $is_pimpl || $is_noncopyable;
 print $FH <<ENDLINE;
 namespace $namespace {
@@ -76,10 +93,11 @@ namespace $namespace {
 	\@brief	$summary
 */
 ENDLINE
+print $FH "template <$template_params>\n" if $is_template;
 print $FH "class $class";
-print $FH " : " if @extends || $is_noncopyable;
+print $FH " : " if @extends || ($is_noncopyable && !$is_template);
 print $FH 'public ' . join(', public ', @extends) if @extends;
-print $FH (@extends ? ', ' : '') . "private boost::noncopyable" if $is_noncopyable;
+print $FH (@extends ? ', ' : '') . "private boost::noncopyable" if ($is_noncopyable && !$is_template);
 print $FH " {\n";
 if ($is_pimpl) {
 	print $FH <<ENDLINE
@@ -88,14 +106,67 @@ if ($is_pimpl) {
 
 ENDLINE
 }
+print $FH <<ENDLINE if $is_noncopyable && $is_template;
+	/// コピーコンストラクタ (使用禁止)
+	$class($class const&) = delete;
+	/// コピー代入演算子 (使用禁止)
+	$class & operator=($class const&) = delete;
+	/// ムーブコンストラクタ (使用禁止)
+	$class($class &&) = delete;
+	/// ムーブ代入演算子 (使用禁止)
+	$class & operator=($class &&) = delete;
+
+ENDLINE
 print $FH "public:\n";
-print $FH <<ENDLINE unless $is_interface;
+unless ($is_interface) {
+	print $FH <<ENDLINE;
 	/**
 		\@brief	デフォルトコンストラクタ
 	*/
-	$class();
 ENDLINE
-print $FH <<ENDLINE if $is_copy_constructor;
+	print $FH "\t$class()" . ($is_template ? '' : ';') . "\n";
+	print $FH <<ENDLINE if $is_template;
+	{
+		//TODO: デフォルト生成を行う処理の詳細をここに記述
+	}
+ENDLINE
+}
+if ($is_template) {
+	print $FH <<ENDLINE if $is_copy_constructor;
+	/**
+		\@brief コピーコンストラクタ
+	*/
+	$class($class const& src)
+	{
+		//TODO: コピー生成を行う処理の詳細をここに記述
+	}
+	/**
+		\@brief コピー代入演算子
+	*/
+	$class & operator=($class const& src)
+	{
+		//TODO: コピー代入を行う処理の詳細をここに記述
+	}
+ENDLINE
+	print $FH <<ENDLINE if $is_move_constructor;
+	/**
+		\@brief ムーブコンストラクタ
+	*/
+	$class($class && src)
+	{
+		//TODO: ムーブ生成を行う処理の詳細をここに記述
+	}
+	/**
+		\@brief ムーブ代入演算子
+	*/
+	$class & operator=($class && src)
+	{
+		//TODO: ムーブ代入を行う処理の詳細をここに記述
+	}
+ENDLINE
+}
+else {
+	print $FH <<ENDLINE if $is_copy_constructor;
 	/**
 		\@brief コピーコンストラクタ
 	*/
@@ -105,7 +176,7 @@ print $FH <<ENDLINE if $is_copy_constructor;
 	*/
 	$class & operator=($class const& src);
 ENDLINE
-print $FH <<ENDLINE if $is_move_constructor;
+	print $FH <<ENDLINE if $is_move_constructor;
 	/**
 		\@brief ムーブコンストラクタ
 	*/
@@ -115,12 +186,14 @@ print $FH <<ENDLINE if $is_move_constructor;
 	*/
 	$class & operator=($class && src);
 ENDLINE
+}
 print $FH <<ENDLINE;
 	/**
 		\@brief	デストラクタ
 	*/
 ENDLINE
-print $FH "\t" . ($is_virtual ? 'virtual ' : '') . "~$class()" . ($is_interface ? ' = default' : '') . ";\n";
+print $FH "\t" . ($is_virtual ? 'virtual ' : '') . "~$class()"
+	. ($is_interface || $is_template ? ' = default' : '') . ";\n";
 print $FH <<ENDLINE;
 };
 
@@ -130,7 +203,7 @@ print $FH <<ENDLINE;
 ENDLINE
 close $FH;
 
-exit 0 if $is_interface;
+exit 0 if $is_interface || $is_template;
 
 open my $FCPP, '>', "$file_title.cpp" or die "Can't open $file_title.cpp";
 print $FCPP <<ENDLINE;

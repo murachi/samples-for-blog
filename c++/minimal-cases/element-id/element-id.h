@@ -53,6 +53,18 @@ public:
 	{
 		return std::dynamic_pointer_cast<T>(manager->getElement(element_id));
 	}
+	/**
+		@brief	要素の ID を変更する。
+		@param[in]	elem_id		変更を希望する要素 ID
+		@return	実際に設定された要素 ID
+	*/
+	std::string modifyElementId(std::string const& elem_id)
+	{
+		element_id = manager->modifyElement(element_id, elem_id);
+		manager->getElement(element_id)->setId(element_id);
+
+		return element_id;
+	}
 };
 
 }	//namespace minimum

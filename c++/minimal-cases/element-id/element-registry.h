@@ -1,9 +1,9 @@
 /**
-	@file	element-manager.h
+	@file	element-registry.h
 	@brief	要素 ID をプールし管理するクラス定義
 */
-#ifndef MINIMUM_ELEMENT_MANAGER_H
-#define MINIMUM_ELEMENT_MANAGER_H
+#ifndef MINIMUM_ELEMENT_REGISTRY_H
+#define MINIMUM_ELEMENT_REGISTRY_H
 
 #include <memory>
 #include <string>
@@ -16,7 +16,7 @@ class Element;
 /**
 	@brief	要素 ID をプールし管理するクラス
 */
-class ElementManager : private boost::noncopyable {
+class ElementRegistry : private boost::noncopyable {
 	struct Impl;
 	std::unique_ptr<Impl> impl;	///< 実装オブジェクト
 
@@ -24,24 +24,24 @@ public:
 	/**
 		@brief	要素管理例外クラス
 	*/
-	class ManagementException : public std::exception {
+	class RegistryException : public std::exception {
 		struct Impl;
 		std::unique_ptr<Impl> impl;	///< 実装オブジェクト
 
 	public:
-		explicit ManagementException(std::string const& msg);
-		virtual ~ManagementException();
+		explicit RegistryException(std::string const& msg);
+		virtual ~RegistryException();
 
 		virtual char const* what() const noexcept override;
 	};
 	/**
 		@brief	デフォルトコンストラクタ
 	*/
-	ElementManager();
+	ElementRegistry();
 	/**
 		@brief	デストラクタ
 	*/
-	~ElementManager();
+	~ElementRegistry();
 	/**
 		@brief	要素と ID を登録する。
 		@param[in]	elem		要素
@@ -71,4 +71,4 @@ public:
 
 }	//namespace minimum
 
-#endif	//MINIMUM_ELEMENT_MANAGER_H
+#endif	//MINIMUM_ELEMENT_REGISTRY_H

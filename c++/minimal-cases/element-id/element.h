@@ -30,7 +30,7 @@ public:
 		@brief	要素 ID を設定する
 		@param[in]	elem_id		要素 ID
 
-		ElementManager への登録を経て確定した ID を設定すること。
+		ElementRegistry への登録を経て確定した ID を設定すること。
 		ID の変更を行いたい場合は ElementId テンプレートクラスを使用するべき。
 	*/
 	void setId(std::string const& elem_id);

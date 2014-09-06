@@ -5,7 +5,7 @@
 #ifndef MINIMUM_ELEMENT_ID_H
 #define MINIMUM_ELEMENT_ID_H
 
-#include "element-manager.h"
+#include "element-registry.h"
 
 #include <string>
 
@@ -20,7 +20,7 @@ class ElementId {
 	/// 要素 ID
 	std::string element_id;
 	/// 要素 ID マネージャ
-	ElementManager const* manager;
+	ElementRegistry const* registry;
 
 	/// コピーコンストラクタ (使用禁止)
 	ElementId(ElementId const&) = delete;
@@ -38,8 +38,8 @@ public:
 		@brief	コンストラクタ
 		@param[in]	elem_id		要素 ID
 	*/
-	explicit ElementId(ElementManager const* mgr, std::string const& elem_id) :
-		manager{mgr}, element_id{elem_id}
+	explicit ElementId(ElementRegistry const* reg, std::string const& elem_id :
+		registry{reg}, element_id{elem_id}
 	{}
 	/**
 		@brief	デストラクタ
@@ -51,7 +51,7 @@ public:
 	*/
 	std::shared_ptr<T> getElement() const
 	{
-		return std::dynamic_pointer_cast<T>(manager->getElement(element_id));
+		return std::dynamic_pointer_cast<T>(registry->getElement(element_id));
 	}
 	/**
 		@brief	要素の ID を変更する。
@@ -60,8 +60,8 @@ public:
 	*/
 	std::string modifyElementId(std::string const& elem_id)
 	{
-		element_id = manager->modifyElement(element_id, elem_id);
-		manager->getElement(element_id)->setId(element_id);
+		element_id = registry->modifyElement(element_id, elem_id);
+		registry->getElement(element_id)->setId(element_id);
 
 		return element_id;
 	}

@@ -1,6 +1,6 @@
 /**
 	@file	element-registry.cpp
-	@brief	要素 ID をプールし管理するクラス実装
+	@brief	要素 ID を登録・参照するオブジェクトクラス実装
 */
 
 #include "element-registry.h"

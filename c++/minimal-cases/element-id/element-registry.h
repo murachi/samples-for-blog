@@ -1,6 +1,6 @@
 /**
 	@file	element-registry.h
-	@brief	要素 ID をプールし管理するクラス定義
+	@brief	要素 ID を登録・参照するオブジェクトクラス定義
 */
 #ifndef MINIMUM_ELEMENT_REGISTRY_H
 #define MINIMUM_ELEMENT_REGISTRY_H

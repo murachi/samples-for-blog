@@ -14,7 +14,7 @@ public partial class MainWindow: Gtk.Window
 		a.RetVal = true;
 	}
 
-	protected void OnButton1Clicked (object sender, EventArgs e)
+	protected void OnHello (object sender, EventArgs e)
 	{
 		var msg_dlg = new MessageDialog (this, DialogFlags.Modal, MessageType.Info,
 			              ButtonsType.Ok, "Hello, World!!", new object[]{ });

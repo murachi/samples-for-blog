@@ -49,6 +49,11 @@ public:
 		@param[in]	xml		XML 形式の文字列
 	*/
 	virtual void fromXml(std::string const& xml) override;
+	/**
+		@brief	ヘッダー情報を取得する
+		@return	ヘッダー情報
+	*/
+	std::shared_ptr<CompositHeader> getHeader() 
 };
 
 }	//namespace minimum

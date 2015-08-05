@@ -10,7 +10,6 @@
 
 #include <memory>
 #include <iterator>
-#include <vector>
 
 namespace equation {
 
@@ -19,7 +18,7 @@ namespace equation {
 */
 DLL_PUBLIC
 class Equation {
-    class Impl;
+    struct Impl;
     std::unique_ptr<Equation::Impl> impl;
 
     Equation() = delete;
@@ -29,7 +28,7 @@ class Equation {
     Equation & operator=(Equation &&) = delete;
 
 public:
-    Equation(const double [] coeffs, size_t size);
+    Equation(const double coeffs[], size_t size);
     Equation(std::const_iterator<double> coeff_st, std::const_iterator<double> coeff_ed);
     ~Equation();
 

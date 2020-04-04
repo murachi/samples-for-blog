@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <title>keydown event sample</title>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      var props = [
+        "altKey", "code", "ctrlKey", "isComposing", "key", "locale", "location", "metaKey",
+        "repeat", "shiftKey"
+      ];
+      var text_input = document.querySelector("#text-input");
+      var pre_text = "";
+      text_input.addEventListener("keyup", function(ev) {
+        props.forEach(n => {
+          document.querySelector("#result-" + n).innerText = ev[n];
+        });
+        document.querySelector("#text-value").innerText = this.value;
+        document.querySelector("#text-changed").innerText = pre_text != this.value ? "Yes" : "No";
+        pre_text = this.value;
+      });
+    });
+  </script>
+</head>
+<body>
+  <p><input type="text" id="text-input"></p>
+  <table>
+    <tr>
+      <th>altKey</th><td id="result-altKey"></td>
+    </tr>
+    <tr>
+      <th>code</th><td id="result-code"></td>
+    </tr>
+    <tr>
+      <th>ctrlKey</th><td id="result-ctrlKey"></td>
+    </tr>
+    <tr>
+      <th>isComposing</th><td id="result-isComposing"></td>
+    </tr>
+    <tr>
+      <th>key</th><td id="result-key"></td>
+    </tr>
+    <tr>
+      <th>locale</th><td id="result-locale"></td>
+    </tr>
+    <tr>
+      <th>location</th><td id="result-location"></td>
+    </tr>
+    <tr>
+      <th>metaKey</th><td id="result-metaKey"></td>
+    </tr>
+    <tr>
+      <th>repeat</th><td id="result-repeat"></td>
+    </tr>
+    <tr>
+      <th>shiftKey</th><td id="result-shiftKey"></td>
+    </tr>
+    <tr>
+      <th>value</th><td id="text-value"></td>
+    </tr>
+    <tr>
+      <th>changed?</th><td id="text-changed"></td>
+    </tr>
+  </table>
+</body>
+</html>

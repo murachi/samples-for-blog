@@ -1,3 +1,13 @@
+#[allow(dead_code)]
+
+enum LANG {
+    Japanese,
+    English,
+    Chinese,
+    Franch,
+    Germany,
+}
+
 fn main() {
     let x = String::from("Hello");
     let len = string_length(&x);
@@ -7,6 +17,173 @@ fn main() {
     println!("test(-50) -> {}", test(-50));
     println!("test(200) -> {}", test(200));
     println!("test(42) -> {}", test(42));
+
+    for i in (1..4).rev() {
+        println!("{}!", i);
+    }
+    println!("発射!!");
+
+    let bits: u8 = 0b00110101;
+    println!("not {:08b} == {:08b}", bits, !bits);
+
+    let mut tx = String::from("Yahoo!");
+    println!("tx = {}", tx);
+    str_param_modify(&mut tx);
+    println!("tx (modified) = {}", tx);
+    let tx = str_param_modify_2(&tx);
+    println!("tx (modified(2)) = {}", tx);
+
+    let primes = vec![2, 3, 5, 7, 11, 13, 17, 19];
+    let sum_of_primes = vec_param(&primes);
+    println!("sum is {}", sum_of_primes);
+
+    let mut range = make_range(10);
+    print_vec("range", &range);
+    //for n in &range {
+    //    print!("{} ", n);
+    //}
+    //println!("");
+
+    vec_modify(&mut range);
+    print_vec("range (modified)", &range);
+    //for n in &range {
+    //    print!("{} ", n);
+    //}
+    //println!("");
+
+    let lang = LANG::Germany;
+    let lang = match lang {
+        LANG::Japanese => "日本語",
+        LANG::English => "英語",
+        LANG::Chinese => "中国語",
+        LANG::Franch => "フランス語",
+        LANG::Germany => "ドイツ語",
+        //_ => "日本語以外",
+    };
+    println!("lang is {}", lang);
+
+    let x = Some(10);
+    let v = match x {
+        Some(n) => n,
+        None => -1,
+    };
+    println!("v is {}", v);
+    if let Some(n) = x {
+        println!("x has {}", n);
+    }
+
+    let age = 42;
+    println!("{}歳は{}", age, get_age_name(&age));
+
+    force_cast_array();
+
+    vector_sample1();
+
+    iter_sample1();
+    iter_sample2();
+}
+
+fn iter_sample2() {
+    let v = vec![1, 2, 3, 4, 5];
+    for n in v.iter().map(|x| x * 2) {
+        print!("{} ", n);
+    }
+    println!("");
+    for n in &v {
+        print!("{} ", n);
+    }
+    println!("");
+}
+
+fn iter_sample1() {
+    let primes = "2,3,5,7,11,13,17,19"
+        .split(',')
+        .map(|x| x.parse::<i32>().expect("isn't digit"))
+        .collect::<Vec<_>>();
+
+    print_vec("primes", &primes);
+}
+
+fn vector_sample1() {
+    //let mut v: Vec<i32> = Vec::new();
+    //let mut v = Vec::<i32>::new();
+    let mut v = Vec::new();
+    println!("v.len is {}", v.len());
+
+    v.push(1000);
+    v.push(2000);
+    v.push(3900);
+    v.push(7700);
+    v.push(8000);
+
+    println!("v.len is {}", v.len());
+
+    println!("v.first is {:?}", v.first());
+    println!("v.last is {:?}", v.last());
+    println!("v.get(1) is {:?}", v.get(1));
+    println!("v.get(10) is {:?}", v.get(10));
+
+    while v.len() > 0 {
+        println!("poped {:?} from v", v.pop());
+    }
+    println!("v.len is {}", v.len());
+}
+
+fn force_cast_array() {
+    let a = [1u8, 2u8, 3u8, 4u8];
+    unsafe {
+        let b = std::mem::transmute::<[u8; 4], u32>(a);
+        println!("[{:X}, {:X}, {:X}, {:X}] -> {:X}", a[0], a[1], a[2], a[3], b);
+    }
+    let a: u32 = 0x11223344;
+    unsafe {
+        let b = std::mem::transmute::<u32, [u8; 4]>(a);
+        println!("{:X} -> [{:X}, {:X}, {:X}, {:X}]", a, b[0], b[1], b[2], b[3]);
+    }
+}
+
+fn get_age_name(age: &i32) -> &str {
+    match *age {
+        0..=1 => "乳児",
+        2..=4 => "幼児",
+        5..=15 => "少年",
+        16..=29 => "青年",
+        30..=39 => "壮年",
+        40..=54 => "中年",
+        55..=64 => "熟年",
+        65..=74 => "高年・老年",
+        75..=99 => "後期高齢者",
+        100..=119 => "百寿者",
+        _ => "仙人",
+    }
+}
+
+fn vec_modify(v: &mut Vec<i32>) {
+    for i in v {
+        *i *= *i;
+    }
+}
+
+fn print_vec(text: &str, v: &Vec<i32>) {
+    print!("{}: ", text);
+    for (i, n) in v.iter().enumerate() {
+        print!("[{}]{} ", i, n);
+    }
+    println!("");
+}
+
+fn make_range(max: i32) -> Vec<i32> {
+    let mut v = Vec::new();
+    for i in 0..max {
+        v.push(i);
+    }
+    v
+}
+
+fn vec_param(v: &Vec<i32>) -> i32 {
+    let mut sum = 0;
+    for n in v { sum += n; }
+    sum
 }
 
 fn string_length(s: &String) -> usize {
@@ -21,4 +198,12 @@ fn test(x: i32) -> i32 {
         else { x };
 
     ans
+}
+
+fn str_param_modify(s: &mut String) {
+    *s = String::from("hello");
+}
+
+fn str_param_modify_2(s: &str) -> String {
+    format!("hello {} world.", s)
 }

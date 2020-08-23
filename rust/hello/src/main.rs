@@ -1,5 +1,6 @@
-#[allow(dead_code)]
+//use std::num::ParseFloatError;
 
+#[allow(dead_code)]
 enum LANG {
     Japanese,
     English,
@@ -81,6 +82,22 @@ fn main() {
 
     iter_sample1();
     iter_sample2();
+
+    let texts = ["100", "xxx", "3.141592653589793236", "0xFB386"];
+    for r in texts.iter().map(|t| half_number(t)) {
+        match r {
+            Ok(n) => println!("Ok: {}", n),
+            Err(ex) => println!("Error: {:?}", ex),
+        }
+    }
+}
+
+fn half_number(s: &str) -> Result<f64, String> {
+    //s.parse::<f64>().map(|n| n / 2.0)
+    match s.parse::<f64>() {
+        Ok(n) => Ok(n / 2.0),
+        Err(_) => Err(format!("'{}' を実数値に変換できません", s)),
+    }
 }
 
 fn iter_sample2() {
@@ -164,7 +181,7 @@ fn vec_modify(v: &mut Vec<i32>) {
     }
 }
 
-fn print_vec(text: &str, v: &Vec<i32>) {
+fn print_vec<T>(text: &str, v: &Vec<T>) where T: std::fmt::Display {
     print!("{}: ", text);
     for (i, n) in v.iter().enumerate() {
         print!("[{}]{} ", i, n);

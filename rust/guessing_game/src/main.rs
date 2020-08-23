@@ -4,7 +4,7 @@ use std::io;
 use std::cmp::Ordering;
 use rand::Rng;
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("数あてゲームです。");
 
     let secret_num = rand::thread_rng().gen_range(1, 101);
@@ -16,8 +16,8 @@ fn main() {
 
         let mut guess = String::new();
 
-        io::stdin().read_line(&mut guess)
-        .expect("ユーザーからの入力に失敗");
+        io::stdin().read_line(&mut guess)?;
+            //.expect("ユーザーからの入力に失敗");
 
         let guess: i32 = match guess.trim().parse() {
             Ok(num) => num,
@@ -35,4 +35,6 @@ fn main() {
             },
         }
     }
+
+    Ok(())
 }

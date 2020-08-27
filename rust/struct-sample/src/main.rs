@@ -49,33 +49,33 @@ impl PersonFactory {
     }
 }
 
-struct Rectangle {
-    left: f32,
-    top: f32,
-    width: f32,
-    height: f32,
+struct Rectangle<T> {
+    left: T,
+    top: T,
+    width: T,
+    height: T,
 }
 
-struct Polygon {
-    vertexes: [(f32, f32); 3],
+struct Polygon<T> {
+    vertexes: [(T, T); 3],
 }
 
-struct Circle {
-    center: (f32, f32),
-    radius: f32,
+struct Circle<T> {
+    center: (T, T),
+    radius: T,
 }
 
 trait CalcArea {
-    fn calc_area(&self) -> f32;
+    fn calc_area(&self) -> f64;
 }
 
-impl CalcArea for Rectangle {
-    fn calc_area(&self) -> f32 {
-        self.width * self.height
+impl<T: std::convert::Into<f64> + Copy> CalcArea for Rectangle<T> {
+    fn calc_area(&self) -> f64 {
+        self.width.into() * self.height.into()
     }
 }
-impl CalcArea for Polygon {
-    fn calc_area(&self) -> f32 {
+impl<T: std::convert::Into<f64> + Copy + PartialOrd> CalcArea for Polygon<T> {
+    fn calc_area(&self) -> f64 {
         // Y座標が 2番目になる頂点を選択 ...(1)
         let c01 = self.vertexes[0].1 <= self.vertexes[1].1;
         let c12 = self.vertexes[1].1 <= self.vertexes[2].1;
@@ -87,24 +87,25 @@ impl CalcArea for Polygon {
         // それ以外の頂点 ...(2)
         let other_n = [(middle_n + 1) % 3, (middle_n + 2) % 3];
         // (2) の線分の Y座標が (1) と同じになる点 ...(3)
-        let ratio = (self.vertexes[middle_n].1 - self.vertexes[other_n[1]].1) /
-            (self.vertexes[other_n[0]].1 - self.vertexes[other_n[1]].1);
+        let ratio =
+            (self.vertexes[middle_n].1.into() - self.vertexes[other_n[1]].1.into()) /
+            (self.vertexes[other_n[0]].1.into() - self.vertexes[other_n[1]].1.into());
         let div_pt = (
             // x2 + (x1 - x2) * rat = x2 * (1 - rat) + x1 * rat
-            self.vertexes[other_n[1]].0 * (1.0 - ratio) + self.vertexes[other_n[0]].0 * ratio,
-            self.vertexes[middle_n].1);
+            self.vertexes[other_n[1]].0.into() * (1.0 - ratio)
+                + self.vertexes[other_n[0]].0.into() * ratio,
+            self.vertexes[middle_n].1.into());
         // (3) と (1) の X座標の差を底辺の長さ、 (2) の Y座標の差を高さとすれば
         // 面積が求められる
-        (
-            (self.vertexes[middle_n].0 - div_pt.0)
-            * (self.vertexes[other_n[0]].1 - self.vertexes[other_n[1]].1)
-            / 2.0
-        ).abs()
+        let area = (self.vertexes[middle_n].0.into() - div_pt.0)
+            * (self.vertexes[other_n[0]].1.into() - self.vertexes[other_n[1]].1.into())
+            / 2.0;
+        if area > 0.0 { area } else { -area }
     }
 }
-impl CalcArea for Circle {
-    fn calc_area(&self) -> f32 {
-        self.radius * self.radius * std::f32::consts::PI
+impl<T: std::convert::Into<f64> + Copy> CalcArea for Circle<T> {
+    fn calc_area(&self) -> f64 {
+        self.radius.into() * self.radius.into() * std::f64::consts::PI
     }
 }
 
@@ -154,19 +155,23 @@ fn main() {
     let tri = Polygon {
         vertexes: [(-12.0, 30.0), (4.0, -18.0), (22.0, 13.0)],
     };
+    let tri2 = Polygon::<f32> {
+        vertexes: [(-12.0, 30.0), (4.0, -18.0), (22.0, 13.0)],
+    };
     let cir = Circle {
         center: (20.0, 0.0),
         radius: 6.0,
     };
     print_area(&rect, "rect");
     print_area(&tri, "tri");
+    print_area(&tri2, "tri2");
     print_area(&cir, "cir");
     //println!("rect area is {}", rect.calc_area());
     //println!("tri area is {}", tri.calc_area());
     //println!("cir area is {}", cir.calc_area());
 }
 
-fn print_area<T>(fig: &T, name: &str) where T: CalcArea {
+fn print_area<T: CalcArea>(fig: &T, name: &str) {
     println!("{} area is {}", name, fig.calc_area());
 }
 

@@ -181,7 +181,7 @@ fn vec_modify(v: &mut Vec<i32>) {
     }
 }
 
-fn print_vec<T>(text: &str, v: &Vec<T>) where T: std::fmt::Display {
+fn print_vec(text: &str, v: &Vec<impl std::fmt::Display>) {
     print!("{}: ", text);
     for (i, n) in v.iter().enumerate() {
         print!("[{}]{} ", i, n);

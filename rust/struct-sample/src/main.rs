@@ -152,7 +152,7 @@ fn main() {
         width: 12.0,
         height: 4.5,
     };
-    let tri = Polygon {
+    let mut tri = Polygon {
         vertexes: [(-12.0, 30.0), (4.0, -18.0), (22.0, 13.0)],
     };
     let tri2 = Polygon::<f32> {
@@ -169,6 +169,20 @@ fn main() {
     //println!("rect area is {}", rect.calc_area());
     //println!("tri area is {}", tri.calc_area());
     //println!("cir area is {}", cir.calc_area());
+
+
+    let mut tri_ref = &mut tri;
+    tri_ref.vertexes[1] = (0.0, 0.0);   // 参照のメンバーも "." でアクセス可能
+    // 以下 2行は順序を逆にはできない (可変参照を操作中に参照元を借用することはできない)
+    print_area(tri_ref, "tri_ref");     // 既に参照なので "&" は不要
+    print_area(&tri, "tri");
+
+    // このあとに tri_ref を使用しないのであれば、同一スコープ内で mutable な参照を
+    // もう一つ借用することも可能
+    let mut tri_ref2 = &mut tri;
+    tri_ref2.vertexes[2] = (-22.0, 13.0);
+    print_area(tri_ref2, "tri_ref2");
+    print_area(&tri, "tri");
 }
 
 fn print_area<T: CalcArea>(fig: &T, name: &str) {

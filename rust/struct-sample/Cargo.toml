@@ -1,5 +1,5 @@
 [package]
-name = "struct-sample"
+name = "struct_sample"
 version = "0.1.0"
 authors = ["Murayama Toshiyuki (T.MURACHI) <harapekomurachi@gmail.com>"]
 edition = "2018"

@@ -1,3 +1,5 @@
+use struct_sample::figure::*;
+
 struct Person {
     id: i32,
     name: String,
@@ -49,66 +51,6 @@ impl PersonFactory {
     }
 }
 
-struct Rectangle<T> {
-    left: T,
-    top: T,
-    width: T,
-    height: T,
-}
-
-struct Polygon<T> {
-    vertexes: [(T, T); 3],
-}
-
-struct Circle<T> {
-    center: (T, T),
-    radius: T,
-}
-
-trait CalcArea {
-    fn calc_area(&self) -> f64;
-}
-
-impl<T: std::convert::Into<f64> + Copy> CalcArea for Rectangle<T> {
-    fn calc_area(&self) -> f64 {
-        self.width.into() * self.height.into()
-    }
-}
-impl<T: std::convert::Into<f64> + Copy + PartialOrd> CalcArea for Polygon<T> {
-    fn calc_area(&self) -> f64 {
-        // Y座標が 2番目になる頂点を選択 ...(1)
-        let c01 = self.vertexes[0].1 <= self.vertexes[1].1;
-        let c12 = self.vertexes[1].1 <= self.vertexes[2].1;
-        let c20 = self.vertexes[2].1 <= self.vertexes[0].1;
-        let middle_n =
-            if c01 && c12 { 1 }
-            else if c12 && c20 { 2 }
-            else { 0 };
-        // それ以外の頂点 ...(2)
-        let other_n = [(middle_n + 1) % 3, (middle_n + 2) % 3];
-        // (2) の線分の Y座標が (1) と同じになる点 ...(3)
-        let ratio =
-            (self.vertexes[middle_n].1.into() - self.vertexes[other_n[1]].1.into()) /
-            (self.vertexes[other_n[0]].1.into() - self.vertexes[other_n[1]].1.into());
-        let div_pt = (
-            // x2 + (x1 - x2) * rat = x2 * (1 - rat) + x1 * rat
-            self.vertexes[other_n[1]].0.into() * (1.0 - ratio)
-                + self.vertexes[other_n[0]].0.into() * ratio,
-            self.vertexes[middle_n].1.into());
-        // (3) と (1) の X座標の差を底辺の長さ、 (2) の Y座標の差を高さとすれば
-        // 面積が求められる
-        let area = (self.vertexes[middle_n].0.into() - div_pt.0)
-            * (self.vertexes[other_n[0]].1.into() - self.vertexes[other_n[1]].1.into())
-            / 2.0;
-        if area > 0.0 { area } else { -area }
-    }
-}
-impl<T: std::convert::Into<f64> + Copy> CalcArea for Circle<T> {
-    fn calc_area(&self) -> f64 {
-        self.radius.into() * self.radius.into() * std::f64::consts::PI
-    }
-}
-
 fn main() {
     let mut pf = PersonFactory::new();
     let mut pa = pf.gen_person("Murayama Toshiyuki", 42, "Narashino Chiba, Japan");
@@ -146,22 +88,10 @@ fn main() {
     //let (r, g, b) = yellow;
     //println!("RGB = ({:.2}, {:.2}, {:.2})", r, g, b);
 
-    let rect = Rectangle {
-        left: 3.5,
-        top: -2.5,
-        width: 12.0,
-        height: 4.5,
-    };
-    let mut tri = Polygon {
-        vertexes: [(-12.0, 30.0), (4.0, -18.0), (22.0, 13.0)],
-    };
-    let tri2 = Polygon::<f32> {
-        vertexes: [(-12.0, 30.0), (4.0, -18.0), (22.0, 13.0)],
-    };
-    let cir = Circle {
-        center: (20.0, 0.0),
-        radius: 6.0,
-    };
+    let rect = Rectangle::new((3.5, -2.5), (12.0, 4.5));
+    let mut tri = Polygon::new([(-12.0, 30.0), (4.0, -18.0), (22.0, 13.0)]);
+    let tri2 = Polygon::<f32>::new([(-12.0, 30.0), (4.0, -18.0), (22.0, 13.0)]);
+    let cir = Circle::new((20.0, 0.0), 6.0);
     print_area(&rect, "rect");
     print_area(&tri, "tri");
     print_area(&tri2, "tri2");
@@ -172,7 +102,7 @@ fn main() {
 
 
     let mut tri_ref = &mut tri;
-    tri_ref.vertexes[1] = (0.0, 0.0);   // 参照のメンバーも "." でアクセス可能
+    tri_ref.mod_vertex(1, (0.0, 0.0));  // 参照のメンバーも "." でアクセス可能
     // 以下 2行は順序を逆にはできない (可変参照を操作中に参照元を借用することはできない)
     print_area(tri_ref, "tri_ref");     // 既に参照なので "&" は不要
     print_area(&tri, "tri");
@@ -180,7 +110,7 @@ fn main() {
     // このあとに tri_ref を使用しないのであれば、同一スコープ内で mutable な参照を
     // もう一つ借用することも可能
     let mut tri_ref2 = &mut tri;
-    tri_ref2.vertexes[2] = (-22.0, 13.0);
+    tri_ref2.mod_vertex(2, (-22.0, 13.0));
     print_area(tri_ref2, "tri_ref2");
     print_area(&tri, "tri");
 }

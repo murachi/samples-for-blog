@@ -101,7 +101,7 @@ fn main() {
     //println!("cir area is {}", cir.calc_area());
 
 
-    let mut tri_ref = &mut tri;
+    let tri_ref = &mut tri;
     tri_ref.mod_vertex(1, (0.0, 0.0));  // 参照のメンバーも "." でアクセス可能
     // 以下 2行は順序を逆にはできない (可変参照を操作中に参照元を借用することはできない)
     print_area(tri_ref, "tri_ref");     // 既に参照なので "&" は不要
@@ -109,7 +109,7 @@ fn main() {
 
     // このあとに tri_ref を使用しないのであれば、同一スコープ内で mutable な参照を
     // もう一つ借用することも可能
-    let mut tri_ref2 = &mut tri;
+    let tri_ref2 = &mut tri;
     tri_ref2.mod_vertex(2, (-22.0, 13.0));
     print_area(tri_ref2, "tri_ref2");
     print_area(&tri, "tri");

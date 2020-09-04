@@ -1,4 +1,6 @@
-use struct_sample::figure::*;
+pub mod figure;
+
+use crate::figure::*;
 
 struct Person {
     id: i32,

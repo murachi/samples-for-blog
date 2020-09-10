@@ -118,8 +118,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("s.len is {}", n);
 
     let a = [2, 3, 5, 6, 8, 9, 11, 12];
-    let ie3 = a.iter().find(|&x| *x == 3);
-    let igt10 = a.iter().find(|&&x| x > 10);
+    let ie3 = a.iter().find(|&x: &&i32| *x == 3);
+    let igt10 = a.iter().find(|&&x: &&i32| x > 10);
     let ile1 = a.iter().find(|&&x| x <= 1);
     if let Some(&n) = ie3 {
         print_num(n, "ie3");
@@ -133,6 +133,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     for it in b {
         println!("it is {}", it);
     }
+
+    let c: Vec<_> = a.iter().map(|n: &i32| n * 2).collect();
+    println!("c is {:?}", c);
 
     Ok(())
 }

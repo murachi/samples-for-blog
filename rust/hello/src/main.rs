@@ -1,4 +1,17 @@
 //use std::num::ParseFloatError;
+use std::os::raw::c_char;
+use std::ffi::CString;
+use std::error::Error;
+
+extern {
+    fn puts(s: *const c_char);
+    fn strlen(s: *const c_char) -> usize;
+}
+
+#[link(name="hello", kind="static")]
+extern {
+    fn hello();
+}
 
 #[allow(dead_code)]
 enum LANG {
@@ -9,7 +22,7 @@ enum LANG {
     Germany,
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     let x = String::from("Hello");
     let len = string_length(&x);
     println!("len = {}", len);
@@ -90,6 +103,42 @@ fn main() {
             Err(ex) => println!("Error: {:?}", ex),
         }
     }
+
+    unsafe {
+        hello();
+    }
+
+    let null_terminated_text = CString::new("Rust の世界へようこそ…。")?;
+    unsafe {
+        puts(null_terminated_text.as_ptr());
+    }
+    let n = unsafe {
+        strlen(null_terminated_text.as_ptr())
+    };
+    println!("s.len is {}", n);
+
+    let a = [2, 3, 5, 6, 8, 9, 11, 12];
+    let ie3 = a.iter().find(|&x| *x == 3);
+    let igt10 = a.iter().find(|&&x| x > 10);
+    let ile1 = a.iter().find(|&&x| x <= 1);
+    if let Some(&n) = ie3 {
+        print_num(n, "ie3");
+    }
+    if let Some(n) = igt10 {
+        print_num(*n, "igt10");
+    }
+    println!("ile1 = {:?}", ile1);
+
+    let b = a.iter().filter(|&&x| x % 2 == 1);
+    for it in b {
+        println!("it is {}", it);
+    }
+
+    Ok(())
+}
+
+fn print_num(n: i32, name: &str) {
+    println!("{} = {}", name, n);
 }
 
 fn half_number(s: &str) -> Result<f64, String> {

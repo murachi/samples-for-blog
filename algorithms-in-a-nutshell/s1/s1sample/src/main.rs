@@ -1,3 +1,8 @@
+pub mod graph;
+
+use crate::graph::*;
+
 fn main() {
-    println!("Hello, world!");
+    let gr = Graph::new(20_usize);
+    gr.output_svg("out.svg");
 }

@@ -2,6 +2,7 @@
 use std::os::raw::c_char;
 use std::ffi::CString;
 use std::error::Error;
+use std::cmp::Ordering;
 
 extern {
     fn puts(s: *const c_char);
@@ -136,6 +137,14 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let c: Vec<_> = a.iter().map(|n: &i32| n * 2).collect();
     println!("c is {:?}", c);
+
+    if let Some(o) = 1f64.partial_cmp(&2f64) {
+        match o {
+            Ordering::Less => println!("1 < 2"),
+            _ => println!("!!?"),
+        }
+    }
+    else { println!("!!!"); }
 
     Ok(())
 }

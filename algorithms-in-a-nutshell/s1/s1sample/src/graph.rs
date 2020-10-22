@@ -7,8 +7,8 @@ const HORIZON_RANGE: (f64, f64) = (0f64, 100f64);
 const VERTICAL_RANGE: (f64, f64) = (0f64, 100f64);
 
 pub struct Graph {
-  points: Vec<(f64, f64)>,
-  polygon: Vec<(f64, f64)>,
+  pub points: Vec<(f64, f64)>,
+  pub polygon: Vec<(f64, f64)>,
 }
 
 impl Graph {
@@ -41,6 +41,7 @@ impl Graph {
       let poly_grp = Group::new()
         .set("stroke", "#aaa")
         .set("stroke-width", "2")
+        .set("fill", "none")
         .add(Polygon::new().set("points", self.polygon.clone()));
       doc = doc.add(poly_grp).add(dot_grp);
 

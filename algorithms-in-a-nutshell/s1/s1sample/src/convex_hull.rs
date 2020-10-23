@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::time::Instant;
 use crate::graph::Graph;
 
 fn calc_angle(p1: (f64, f64), p2: (f64, f64), p3: (f64, f64)) -> f64 {
@@ -42,6 +43,8 @@ fn sorted_by_polar_angle(points: &Vec<(f64, f64)>) -> Vec<(f64, f64)> {
 }
 
 pub fn convex_hull_simple(graph: &mut Graph) {
+    let now = Instant::now();
+
     let mut excludes = HashSet::<usize>::with_capacity(graph.points.len());
     for (i1, &p1) in graph.points.iter().enumerate() {
         for (i2, &p2) in graph.points.iter().enumerate() {
@@ -58,5 +61,9 @@ pub fn convex_hull_simple(graph: &mut Graph) {
     let polygon = graph.points.iter().enumerate()
         .filter(|x| !excludes.contains(&x.0)).map(|x| *x.1).collect();
     let polygon = sorted_by_polar_angle(&polygon);
+
+    let dur = now.elapsed();
+
     graph.polygon = polygon;
+    graph.summary = format!("素朴解 - 処理時間: {}.{:03}秒", dur.as_secs(), dur.subsec_millis());
 }

@@ -1,4 +1,6 @@
+/// 凸包グラフを収める構造体の実装。
 pub mod graph;
+/// 凸包の計算を行う関数群の実装。
 pub mod convex_hull;
 
 use crate::graph::Graph;

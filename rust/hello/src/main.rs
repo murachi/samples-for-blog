@@ -1,6 +1,6 @@
 //use std::num::ParseFloatError;
 use std::os::raw::c_char;
-use std::ffi::CString;
+use std::ffi::{CStr, CString};
 use std::error::Error;
 use std::cmp::Ordering;
 
@@ -12,6 +12,8 @@ extern {
 #[link(name="hello", kind="static")]
 extern {
     fn hello();
+    fn static_str() -> *const c_char;
+    fn dynamic_str() -> *mut c_char;
 }
 
 #[allow(dead_code)]
@@ -146,7 +148,16 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
     else { println!("!!!"); }
 
+    let text = get_c_text();
+    println!("static_str() -> '{}'", text);
+    let text = unsafe { CString::from_raw(dynamic_str()) }.into_string()?;
+    println!("dynamic_str() -> '{}'", text);
+
     Ok(())
+}
+
+fn get_c_text<'a>() -> &'a str {
+    unsafe { CStr::from_ptr(static_str()) }.to_str().unwrap()
 }
 
 fn print_num(n: i32, name: &str) {

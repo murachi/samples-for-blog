@@ -1,5 +1,6 @@
 import os, re
 from pydub import AudioSegment
+import audio_metadata
 
 def convSafeName(name):
     ng_chars = r'\:*?"<>|'
@@ -28,6 +29,7 @@ special_groups = {
     'わんわん・ゆきちゃん・うーたん': 'kids',
     'サイドプロテア': 'neta',
     '再生ハイパーべるーヴ': 'neta',
+    '八卦商会': 'neta',
     '不気味社音響基礎研究所': 'neta',
 }
 
@@ -49,6 +51,9 @@ for src_path, dirs, files in walk:
         if os.path.exists(dist_fullpath):
             continue
         print('  - {0} -> {1}'.format(src_file, dist_file))
-        music = AudioSegment.from_file(os.path.join(src_path, src_file), 'flac')
-        music.export(dist_fullpath, format = out_format, codec = out_codec)
+        src_fullpath = os.path.join(src_path, src_file)
+        music = AudioSegment.from_file(src_fullpath, 'flac')
+        metadata = audio_metadata.load(src_fullpath)
+        music.export(dist_fullpath, format = out_format, codec = out_codec,
+            tags = {n[0]: ' - '.join(n[1]) for n in metadata['tags'].items()})
         #music.export(dist_fullpath, format = 'mp3', parameters = ['-ar', '44100', '-b:a', '256k'])

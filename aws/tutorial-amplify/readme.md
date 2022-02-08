@@ -70,3 +70,92 @@ Git 使わない方法だからとりあえず `Amplify Studio` を選んでお�
 ただそれだけだと何故かデフォルトの Hello world 関数みたいなのが設定されちゃうので、ここで「Deploy」をクリックすると、先に設定したテスト用 Lambda 関数にコードの内容がデプロイされて、やっと「Test」ボタンでテストできるようになる。
 
 ![Test を実行したところ](mod2-create-lambda-function/figs/fig-lambda-test-executed.png)
+
+## サーバレス関数にリンクする
+- [mod3-create-REST-API ディレクトリへ](mod3-create-REST-API/)
+
+まず始める前にリージョンを確認したほうが良さげ。 API Gateway のページに入った段階で、リージョンの設定が↑と違うなら選択し直す。わい、ここでバージニア北部になってるのに気づかずに進めちゃってめっさ手戻りした… orz
+
+![リージョンはちゃんと確認しよう](mod3-create-REST-API/figs/fig-api-gateway-region.png)
+
+### 実装: 新しい REST API を作成する
+> 2. オレンジの [API の作成] ボタンをクリックします。
+> 3. REST API ボックスを見つけて、その中のオレンジの [構築] ボタンをクリックします。
+
+2 は無かった。3 はこれのことかな?
+
+![API Gateway の最初のページ、の左下にあったブロック](mod3-create-REST-API/figs/fig-api-gateway-1st-page.png)
+
+なんかアラートが出た。インポートフォーム? にサンプルプログラムをとりあえず突っ込んどいたって話?
+
+![のっけからよくわからんアラート](mod3-create-REST-API/figs/fig-api-gateway-1st-alert.png)
+
+> 4. [プロトコルの選択] で、[REST] を選択します。
+> 4. [Create new API] で、[New API] を選択します。
+> 4. [API 名] フィールドに、「HelloWorldAPI」と入力します。
+> 4. [エンドポイントタイプ] プルダウンで [エッジ最適化] を選択します
+
+API名は `myTutorialAPI` としてみた。
+
+![API作成時の設定内容](mod3-create-REST-API/figs/fig-api-gateway-create-setting.png)
+
+### 実装: 新しいリソースとメソッドを作成する
+> 2. [/] リソースを選択した状態で、[アクション] ドロップダウンメニューから [メソッドの作成] をクリックします。
+
+これか。
+
+![「アクション」ドロップダウンメニューの「メソッドの作成」](mod3-create-REST-API/figs/fig-api-gateway-create-method.png)
+
+> 3. 表示される新しいドロップダウンから POST を選択し、チェックマークをクリックします。
+
+これのことらしい。(ドロップ開いた状態ではキャプチャが上手く取れなかった…)
+
+![HTTPメソッドの選択](mod3-create-REST-API/figs/fig-api-gateway-method-http-method.png)
+
+> 4. 統合タイプとして [Lambda 関数] を選択します。
+> 4. [関数] フィールドに、「HelloWorldFunction」と入力します。
+> 4. ブルーの [保存] ボタンをクリックします。
+
+関数フィールドに、前のチュートリアルで作った関数名 `myTutorialFunction` を入力しようとすると、ちゃんと保管候補が出てくる。入力後の画面はこんな感じ。
+
+![リソースの設定内容](mod3-create-REST-API/figs/fig-api-gateway-resource-setting.png)
+
+> 7. 作成している API に Lambda 関数を呼び出すアクセス許可を与えていることを知らせるメッセージが表示されます。[OK] ボタンをクリックします。
+
+Lambda 関数に権限をつけちゃうよ、というアラートが出た。
+
+![リソースの設定内容](mod3-create-REST-API/figs/fig-api-gateway-alert-authority.png)
+
+> 8. 新しく作成した POST メソッドを選択した状態で、[アクション] ドロップダウンメニューから [CORS を有効にする] を選択します。
+
+これか。
+
+![CORS を有効に](mod3-create-REST-API/figs/fig-api-gateway-activate-CORS.png)
+
+あとはだいたい書いてある通り。
+
+### 実装: API をデプロイする
+
+> 1. [アクション] ドロップダウンリストで、[Deploy API] を選択します。
+
+これですね。
+
+![Deploy API メニュー](mod3-create-REST-API/figs/fig-api-gateway-api-deploy-menu.png)
+
+> 2. [デプロイステージ] ドロップダウンリストから [新しいステージ] を選択します。
+> 2. [ステージ名] に「dev」と入力します。
+
+こんな感じかな。
+
+![「APIのデプロイ」ダイアログの設定内容](mod3-create-REST-API/figs/fig-api-gateway-api-deploy-setting.png)
+
+> 5. [URL を呼び出す] の横にある URL をコピーして保存します (モジュール 5 で必要になります)。
+
+こいつのことらしい。
+
+![URLの呼び出し](mod3-create-REST-API/figs/fig-api-gateway-API-URL.png)
+
+URL:
+```
+https://8ks7kzg0b7.execute-api.us-west-2.amazonaws.com/dev
+```

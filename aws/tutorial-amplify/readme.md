@@ -159,3 +159,113 @@ URL:
 ```
 https://8ks7kzg0b7.execute-api.us-west-2.amazonaws.com/dev
 ```
+
+## データテーブルを作成する
+- [mod4-configure-dynamoDB ディレクトリへ](mod4-configure-dynamoDB/)
+
+まずはリージョンを確認しましょう(´・\_・\`) 今度は何故かデフォがオハイオだった(´・\_・\`)
+
+### 実装: DynamoDB テーブルを作成する
+
+> 3. ブルーの [テーブルの作成] ボタンをクリックします。
+
+オレンジなんだが…(´・\_・\`)
+
+![テーブルの作成ボタン](mod4-configure-dynamoDB/figs/fig-dynamo-create-table-button.png)
+
+> 4. [テーブル名] の横に、HelloWorldDatabase と入力します。
+> 4. [プライマリキー] フィールドに、ID と入力します。
+
+テーブル名は `myTutorialDatabase` としてみた。「プライマリキー」は、今は「パーティションキー」と呼んでいるらしい。
+
+![設定内容](mod4-configure-dynamoDB/figs/fig-dynamo-create-table-settings.png)
+
+> 6. ブルーの [作成] ボタンをクリックします。
+
+だからオレンジだっつの…
+
+![作成ボタン](mod4-configure-dynamoDB/figs/fig-dynamo-create-table-decide-button.png)
+
+状態は作成中だが正常に作成されたらしい。つかなんで 2行あるんだ? (´・\_・\`)
+
+![作成を実行後の画面](mod4-configure-dynamoDB/figs/fig-dynamo-create-table-fixed.png)
+
+> 7. 右側のパネルからテーブルの「Amazon リソースネーム (ARN) 」をコピーします (後でこのモジュールで必要になります)。
+
+作成後の画面が↑の状態だったので ARN なんて出てこねーぞって最初は焦った(´・\_・\`)
+
+ブラウザを更新したらこんな感じの画面になったので、
+
+![ブラウザの更新を実行後](mod4-configure-dynamoDB/figs/fig-dynamo-reload-after-table-created.png)
+
+テーブル名をクリックして設定画面を開いたら、「一般的な情報」セクションの「追加情報」をクリックすると…
+
+![テーブルの設定ページ](mod4-configure-dynamoDB/figs/fig-dynamo-table-setting-page.png)
+
+同セクションの下の方に ARN が表示された。
+
+![ARNめっけた](mod4-configure-dynamoDB/figs/fig-dynamo-ARN.png)
+
+ARN:
+```
+arn:aws:dynamodb:us-west-2:157489307820:table/myTutorialDatabase
+```
+
+### 実装: IAMポリシーを作成してLambda関数に追加
+
+> 3. DynamoDB サービスを使用できるように関数にアクセス許可を追加します。このために、AWS Identity and Access Management (IAM) を使用します。
+> 3. [アクセス許可] タブをクリックします。
+> 3. [実行ロール] ボックスで、ロールをクリックします。新しいブラウザタブが開きます。
+
+3 はただの説明? 4 は全然違っていて、「設定」タブの「アクセス権限」メニューが正解。
+
+![ロールの在り処](mod4-configure-dynamoDB/figs/fig-lambda-role.png)
+
+> 6. [アクセス許可ポリシー] ボックスの右側にある [インラインポリシーの追加] をクリックします。
+
+「許可ポリシー」セクション右側の「アクセス許可を追加」→「インラインポリシーを作成」が正解。
+
+![ロールのインラインポリシー設定メニュー](mod4-configure-dynamoDB/figs/fig-lambda-role-create-inline-policy-menu.png)
+
+> 12. ブルー の [ポリシーの作成] ボタンをクリックします。
+> 12. これで、このブラウザータブを閉じて、Lambda 関数のタブに戻ることができます。
+
+気が早いな…「ポリシーの作成」ボタンを押したらこんなページに遷移したぞ。
+
+![ポリシーの確認ページ](mod4-configure-dynamoDB/figs/fig-lambda-role-policy-confirm.png)
+
+名前が必須らしいので、 `myTutorialFunctionRolePolicy` としてみた。
+
+で、画面最下部にまだ「ポリシーの作成」ボタンが居るので、もう一度クリック。これでようやくポリシーの設定が完了。今作成したポリシーがちゃんと追加されていることが確認できる。
+
+![作成したロールが追加されていることを確認](mod4-configure-dynamoDB/figs/fig-lambda-role-create-fixed.png)
+
+### 実装: Lambda 関数を変更して DynamoDB テーブルに書き込む
+
+> 1. [設定] タブをクリックします。
+
+相変わらずおかしなことを言ってるが、ここは「コード」タブやな。(面倒なので画像は割愛)
+
+> 3. ページの上部にあるオレンジの [保存] ボタンをクリックします。
+
+これもオレンジの「Test」ボタンで動作確認してからの、白い「Deploy」ボタンが正解やな。
+
+### 実装: 変更をテスト
+
+> 1. 白の [テスト] ボタンをクリックします。
+> 1. グリーンの背景の「実行結果: 成功」メッセージが表示されます。
+
+DynamoDB への書き込みを実際に行うテストを駆動したい場合は、コードタブ内の「テスト」ボタンではなく、「テスト」タブを使うのが正しいらしい。こちらの「テストイベント」セクション内にあるオレンジの「テスト」ボタンをクリックすると、下の画像のような結果の画面が得られる。
+
+![テスト実行結果画面](mod4-configure-dynamoDB/figs/fig-lambda-test-result.png)
+
+> 6. 右側の [アイテム] タブをクリックします。
+> 6. テストイベントに一致するアイテムがここに表示されます。
+
+オレンジの「テーブルアイテムの探索」ボタンをクリック、が正解。
+
+![テーブルアイテムの探索ボタン](mod4-configure-dynamoDB/figs/fig-dynamo-find-items-button.png)
+
+「アイテムのスキャン/クエリ」セクションで「スキャン」を選んでフィルター何もなしで「実行する」をクリックすれば、追加された値が閲覧できる。
+
+![テーブルのアイテムをスキャン](mod4-configure-dynamoDB/figs/fig-dynamo-scan-items.png)
